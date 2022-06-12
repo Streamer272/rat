@@ -7,7 +7,7 @@
 #define BOLD style("1")
 #define UNDERLINE style("4")
 #define GREEN style("32")
-#define BLUE style("34")
+#define CYAN style("36")
 #define GREY style("38;2;85;87;83")
 
 #endif
