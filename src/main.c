@@ -6,6 +6,7 @@
 #include "term.h"
 #include "print_help.h"
 #include "def/program.h"
+#include "def/style.h"
 
 int main(int argc, char *argv[]) {
     init_terminal();
@@ -22,6 +23,21 @@ int main(int argc, char *argv[]) {
     if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
         print_help();
         return EXIT_SUCCESS;
+    }
+
+    for (int i = 1; i < argc; i++) {
+        FILE *file;
+        if (strcmp(argv[i], "-") == 0) {
+            file = stdin;
+        } else {
+            file = fopen(argv[i], "r");
+            if (file == NULL) {
+                fprintf(stderr, RED "Couldn't open file %s\n" RESET, argv[i]);
+                continue;
+            }
+        }
+
+        print_file(file, OPTIONS_DEFAULT);
     }
 
     return EXIT_SUCCESS;

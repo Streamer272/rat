@@ -4,22 +4,22 @@
 #include <stdbool.h>
 
 typedef struct {
-    bool showLineNumber;
-    bool showNonPrintableChars;
-    bool copyToClipboard;
+    bool show_line_number;
+    bool show_non_printable_chars;
+    bool copy_to_clipboard;
     char *start;
     char *end;
-    char *highlightLine;
+    char *highlight_line;
     char *filter;
 } OPTIONS;
 
 #define OPTIONS_DEFAULT (OPTIONS) { \
-    .showLineNumber = false, \
-    .showNonPrintableChars = false, \
-    .copyToClipboard = false,       \
+    .show_line_number = false, \
+    .show_non_printable_chars = false, \
+    .copy_to_clipboard = false,       \
     .start = "1",                   \
     .end = "",                      \
-    .highlightLine = "",            \
+    .highlight_line = "",            \
     .filter = ""                    \
 }
 
