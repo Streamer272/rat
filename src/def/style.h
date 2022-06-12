@@ -8,6 +8,6 @@
 #define UNDERLINE style("4")
 #define GREEN style("32")
 #define CYAN style("36")
-#define GREY style("38;2;85;87;83")
+#define GREY style("38;2;153;153;153")
 
 #endif

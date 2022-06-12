@@ -3,7 +3,7 @@
 
 #include <sys/ioctl.h>
 
-struct winsize term_size;
+extern struct winsize term_size;
 
 void init_terminal();
 

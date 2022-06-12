@@ -2,22 +2,19 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <sys/ioctl.h>
 #include "print_file.h"
-
-struct winsize term_size;
-
-void init_terminal();
-void print_help();
+#include "term.h"
+#include "print_help.h"
 
 int main(int argc, char *argv[]) {
     init_terminal();
 
     if (argc == 1) {
         print_file(stdin, OPTIONS_DEFAULT);
+        return EXIT_SUCCESS;
     }
 
-    if (strcmp(argv[1], "--help") == 0) {
+    if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
         print_help();
         return EXIT_SUCCESS;
     }
