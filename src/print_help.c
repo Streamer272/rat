@@ -66,7 +66,7 @@ void print_line(char *line) {
 
 void print_help() {
     safe_print("\n");
-    safe_print("Usage: rat [OPTIONS] [FILES]\n");
+    safe_print("Usage: rat [FILE_OPTIONS] [FILES]\n");
     safe_print("\n");
 
     safe_print(GREY "┌ Options ");

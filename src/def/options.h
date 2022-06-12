@@ -11,16 +11,36 @@ typedef struct {
     char *end;
     char *highlight_line;
     char *filter;
-} OPTIONS;
+} FILE_OPTIONS;
 
-#define OPTIONS_DEFAULT (OPTIONS) { \
+typedef struct {
+    bool show_hidden;
+    bool show_size;
+    bool show_created_time;
+    bool show_updated_time;
+    bool recursive;
+    bool long_output;
+    char *filter;
+} DIR_OPTIONS;
+
+#define FILE_OPTIONS_DEFAULT (FILE_OPTIONS) { \
     .show_line_number = false, \
     .show_non_printable_chars = false, \
-    .copy_to_clipboard = false,       \
-    .start = "1",                   \
-    .end = "",                      \
-    .highlight_line = "",            \
-    .filter = ""                    \
+    .copy_to_clipboard = false, \
+    .start = "1", \
+    .end = "", \
+    .highlight_line = "", \
+    .filter = "" \
+}
+
+#define DIR_OPTIONS_DEFAULT (DIR_OPTIONS) { \
+    .show_hidden = false, \
+    .show_size = false, \
+    .show_created_time = false, \
+    .show_updated_time = false, \
+    .recursive = false, \
+    .long_output = false, \
+    .filter = "" \
 }
 
 #endif

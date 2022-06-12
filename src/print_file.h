@@ -4,6 +4,6 @@
 #include <stdio.h>
 #include "def/options.h"
 
-void print_file(FILE *file, OPTIONS options);
+void print_file(FILE *file, FILE_OPTIONS options);
 
 #endif

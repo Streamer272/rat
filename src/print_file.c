@@ -1,7 +1,7 @@
 #include "print_file.h"
 #include "alloc.h"
 
-void print_file(FILE *file, OPTIONS options) {
+void print_file(FILE *file, FILE_OPTIONS options) {
     char *line = alloc(sizeof(char) * 1024);
     size_t line_size = 1024;
 

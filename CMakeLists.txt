@@ -9,6 +9,6 @@ add_executable(rat
         src/alloc.c src/alloc.h src/def/program.h src/def/style.h
         src/print_file.c src/print_file.h
         src/print_help.c src/print_help.h
-        src/term.c src/term.h)
+        src/term.c src/term.h src/print_dir.c src/print_dir.h)
 
 install(TARGETS rat DESTINATION /usr/local/bin)
