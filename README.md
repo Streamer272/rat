@@ -16,4 +16,4 @@ Use `rat --help` to see all available options
 
 ## License
 
-[Proprietary](https://github.com/Streamer272/rat/blob/main/LICENSE) (yes, we are gay)
+[GNU GPL](https://www.gnu.org/licenses/gpl-3.0.en.html)
