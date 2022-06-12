@@ -30,7 +30,7 @@ size_t printable_len(char *line) {
 }
 
 void print_line(char *line) {
-    if (term_size.ws_col < strlen(line) + 1) {
+    if (term_size.ws_col < printable_len(line) + 2) {
         perror("Terminal is too small");
         exit(EXIT_FAILURE);
     }
@@ -57,6 +57,7 @@ void print_help() {
     print_line("");
 
     print_line("  " GREEN "-v" RESET " " CYAN "--version" RESET "  Print version and exit");
+    print_line("  " GREEN "-h" RESET " " CYAN "--help   " RESET "  Print help message and exit");
 
     print_line("");
     printf(GREY "└");

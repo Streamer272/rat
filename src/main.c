@@ -5,6 +5,7 @@
 #include "print_file.h"
 #include "term.h"
 #include "print_help.h"
+#include "def/program.h"
 
 int main(int argc, char *argv[]) {
     init_terminal();
@@ -14,6 +15,10 @@ int main(int argc, char *argv[]) {
         return EXIT_SUCCESS;
     }
 
+    if (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0) {
+        printf("%s %s\n", NAME, VERSION);
+        return EXIT_SUCCESS;
+    }
     if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
         print_help();
         return EXIT_SUCCESS;
