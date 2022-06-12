@@ -5,4 +5,4 @@ set(CMAKE_C_STANDARD 23)
 
 add_executable(rat
         src/main.c
-        src/options.h src/bool.h)
+        src/options.h src/bool.h src/alloc.c src/alloc.h src/print_file.c src/print_file.h)

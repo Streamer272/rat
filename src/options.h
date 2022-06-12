@@ -4,9 +4,8 @@
 #include "bool.h"
 
 typedef struct {
-    bool showEndsAsDollarSign;
     bool showLineNumber;
-    bool showBlankCharsAsCarrot;
+    bool showNonPrintableChars;
     bool copyToClipboard;
     char *start;
     char *end;
