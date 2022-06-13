@@ -1,16 +1,27 @@
 #include "print_file.h"
-#include "alloc.h"
 
 void print_file(FILE *file, FILE_OPTIONS options) {
-    char *line = alloc(sizeof(char) * 1024);
-    size_t line_size = 1024;
+    if (options.show_line_number) printf("1: ");
 
-    int line_number = 0;
-    while (getline(&line, &line_size, file) != -1) {
-        line_number++;
-        if (options.show_line_number) {
-            printf("%d: ", line_number);
+    char ch;
+    int line_number = 1;
+    bool print_new_line = false;
+    while ((ch = (char) getc(file)) != EOF) {
+        if (print_new_line) {
+            line_number++;
+
+            printf("\n");
+            if (options.show_line_number) printf("%d: ", line_number);
+
+            print_new_line = false;
         }
-        printf("%s", line);
+        if (ch == '\n') {
+            print_new_line = true;
+            continue;
+        }
+
+        printf("%c", ch);
     }
+
+    if (print_new_line) printf("\n");
 }
