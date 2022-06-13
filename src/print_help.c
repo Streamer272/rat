@@ -48,17 +48,17 @@ size_t printable_len(char *line) {
 }
 
 void print_line(char *line) {
-    if (term_size.ws_col < printable_len(line) + 2) {
+    /*if (term_size.ws_col < printable_len(line) + 2) {
         fprintf(stderr, "Terminal is too small\n");
         exit(EXIT_FAILURE);
-    }
+    }*/
 
     char *temp = alloc(sizeof(char) * 1024);
-    sprintf(temp, GREY "|" RESET "%s", line);
+    sprintf(temp, GREY "│" RESET "%s", line);
     safe_print(temp);
     free(temp);
     // 2 is strlen(│) + strlen(│)
-    for (int i = 0; i < term_size.ws_col - printable_len(line) - 2; i++) {
+    for (int i = 0; i < ((int) term_size.ws_col) - printable_len(line) - 2; i++) {
         safe_print(" ");
     }
     safe_print(GREY "│\n" RESET);
@@ -75,12 +75,33 @@ void print_help() {
         safe_print("─");
     }
     safe_print("┐\n" RESET);
-    print_line("");
+    print_empty_line();
 
-    print_line("  " GREEN "-v" RESET " " CYAN "--version" RESET "  Print version and exit");
-    print_line("  " GREEN "-h" RESET " " CYAN "--help   " RESET "  Print help message and exit");
+    print_line(BOLD "File options" RESET);
+    print_empty_line();
 
-    print_line("");
+    print_line(OFFSET GREEN "-n" RESET " " CYAN "--number               " RESET OFFSET "Print line numbers");
+    print_line(OFFSET GREEN "-p" RESET " " CYAN "--show-nonprintable    " RESET OFFSET "Show nonprintable characters as ^SOMETHING");
+    print_line(OFFSET GREEN "-c" RESET " " CYAN "--clipboard            " RESET OFFSET "Write file content to clipboard instead of STDOUT");
+    print_line(OFFSET GREEN "-s" RESET " " CYAN "--start        <NUMBER>" RESET OFFSET "Line to start printing at");
+    print_line(OFFSET GREEN "-e" RESET " " CYAN "--end          <NUMBER>" RESET OFFSET "Line to end printing at");
+    print_line(OFFSET GREEN "-H" RESET " " CYAN "--highlight    <NUMBER>" RESET OFFSET "Line to highlight");
+    print_line(OFFSET GREEN "-f" RESET " " CYAN "--filter       <FILTER>" RESET OFFSET "Only print lines containing <FILTER>");
+
+    print_empty_line();
+    print_line(BOLD "Directory options" RESET);
+    print_empty_line();
+
+    print_line(GREEN "TODO" RESET);
+
+    print_empty_line();
+    print_line(BOLD "Commands" RESET);
+    print_empty_line();
+
+    print_line(OFFSET GREEN "-v" RESET " " CYAN "--version              " RESET OFFSET "Print version and exit");
+    print_line(OFFSET GREEN "-h" RESET " " CYAN "--help                 " RESET OFFSET "Print help message and exit");
+
+    print_empty_line();
     safe_print(GREY "└");
     // 2 is strlen(└) + strlen(┘)
     for (int i = 0; i < term_size.ws_col - 2; i++) {
