@@ -14,13 +14,16 @@ void *alloc(size_t size) {
     return ptr;
 }
 
-void *ralloc(void *ptr, size_t size) {
-    void *new_ptr = realloc(ptr, size);
+void *ralloc(void *ptr, size_t size, size_t add_size) {
+    void *new_ptr = malloc(size + add_size);
     if (new_ptr == NULL) {
         perror("Couldn't reallocate memory");
         exit(EXIT_FAILURE);
     }
+    for (int i = 0; i < size; i++) {
+        ((char *) new_ptr)[i] = ((char *) ptr)[i];
+    }
 
-    memset((void*) new_ptr + sizeof(ptr) - size, 0, size - sizeof(ptr));
+    memset((void*) new_ptr + size, 0, add_size);
     return new_ptr;
 }
