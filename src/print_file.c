@@ -1,27 +1,50 @@
 #include "print_file.h"
+#include <string.h>
+#include <malloc.h>
+#include "alloc.h"
 
 void print_file(FILE *file, FILE_OPTIONS options) {
-    if (options.show_line_number) printf("1: ");
-
-    char ch;
     int line_number = 1;
-    bool print_new_line = false;
+    size_t line_size = LINE_SIZE;
+    char *line = alloc(line_size);
+
+    int i = 0;
+    char ch;
+    bool ready = false;
     while ((ch = (char) getc(file)) != EOF) {
-        if (print_new_line) {
-            line_number++;
-
-            printf("\n");
-            if (options.show_line_number) printf("%d: ", line_number);
-
-            print_new_line = false;
-        }
         if (ch == '\n') {
-            print_new_line = true;
-            continue;
+            ready = true;
+        }
+        else {
+            if (i >= line_size) {
+                line = ralloc(line, line_size, LINE_SIZE);
+                line_size += LINE_SIZE;
+            }
+
+            strcat(line, &ch);
         }
 
-        printf("%c", ch);
+        if (ready) {
+            if (options.show_line_number) printf("%d: ", line_number);
+            printf("%s\n", line);
+
+            i = 0;
+            ch = 0;
+            ready = false;
+            line_number++;
+            free(line);
+            line_size = LINE_SIZE;
+            line = alloc(line_size);
+        }
+
+        i++;
     }
 
-    if (print_new_line) printf("\n");
+    if (strcmp(line, "") != 0) {
+        if (options.show_line_number) printf("%d: ", line_number);
+        printf("%s", line);
+        if (ready) printf("\n");
+    }
+
+    free(line);
 }
