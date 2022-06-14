@@ -5,6 +5,8 @@
 #include "def/style.h"
 
 void print_file(FILE *file, FILE_OPTIONS options) {
+    // TODO: implement copy to clipboard with tmpnam(NULL), freopen(tmp_file, "w+", stdout) remove(tmp_file), popen("xclip -in -selection clipboard", "w") and fprintf(xclip_pipe, tmp_file_content)
+
     int line_number = 1;
     size_t line_size = LINE_SIZE;
     char *line = alloc(line_size);
