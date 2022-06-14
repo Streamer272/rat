@@ -91,7 +91,7 @@ void print_help() {
     print_empty_line();
 
     print_line(OFFSET GREEN "-n" RESET " " CYAN "--number             " RESET OFFSET "Print line numbers");
-    print_line(OFFSET GREEN "-p" RESET " " CYAN "--show-nonprintable  " RESET OFFSET "Show nonprintable characters as ^SOMETHING");
+    print_line(OFFSET GREEN "-C" RESET " " CYAN "--show-chars         " RESET OFFSET "Show nonprintable characters as ^SOMETHING");
     print_line(OFFSET GREEN "-c" RESET " " CYAN "--clipboard          " RESET OFFSET "Write file content to clipboard instead of STDOUT");
     print_line(OFFSET GREEN "-s" RESET " " CYAN "--start      <NUMBER>" RESET OFFSET "Line to start printing at");
     print_line(OFFSET GREEN "-e" RESET " " CYAN "--end        <NUMBER>" RESET OFFSET "Line to end printing at");

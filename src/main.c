@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
             file_options.show_line_number = true;
             continue;
         }
-        else if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "--show-nonprintable") == 0) {
+        else if (strcmp(argv[i], "-C") == 0 || strcmp(argv[i], "--show-chars") == 0) {
             file_options.show_non_printable_chars = true;
             continue;
         }
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
 
         // incorrect command
         if (argv[i][0] == '-') {
-            fprintf(stderr, "invalid option %s (see `rat --help`)\n", argv[i]);
+            fprintf(stderr, RED "invalid option %s (see `rat --help`)\n" RESET, argv[i]);
             continue;
         }
 
