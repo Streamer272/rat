@@ -22,8 +22,8 @@ int main(int argc, char *argv[]) {
         return EXIT_SUCCESS;
     }
 
-    FILE_OPTIONS file_options;
-    DIR_OPTIONS dir_options;
+    FILE_OPTIONS file_options = FILE_OPTIONS_DEFAULT;
+    DIR_OPTIONS dir_options = DIR_OPTIONS_DEFAULT;
 
     // command and arg loop
     char *value = NULL;

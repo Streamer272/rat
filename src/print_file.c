@@ -1,6 +1,8 @@
 #include "print_file.h"
+#include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
+#include <limits.h>
 #include "alloc.h"
 #include "def/style.h"
 
@@ -10,6 +12,10 @@ void print_file(FILE *file, FILE_OPTIONS options) {
     int line_number = 1;
     size_t line_size = LINE_SIZE;
     char *line = alloc(line_size);
+    long start = 1;
+    if (strcmp(options.start, "") != 0) start = strtol(options.start, NULL, 10);
+    long end = LONG_MAX;
+    if (strcmp(options.end, "") != 0) end = strtol(options.end, NULL, 10);
 
     int i = 0;
     char ch;
@@ -47,8 +53,12 @@ void print_file(FILE *file, FILE_OPTIONS options) {
         }
 
         if (next_line) {
-            if (options.show_line_number) printf("%d: ", line_number);
-            printf("%s", line);
+            if (line_number >= start && line_number <= end) {
+                if (options.show_line_number) {
+                    printf("%d: ", line_number);
+                }
+                printf("%s", line);
+            }
 
             i = 0;
             ch = 0;
