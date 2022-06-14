@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
         }
 
         // incorrect command
-        if (argv[i][0] == '-') {
+        if (argv[i][0] == '-' && strcmp(argv[i], "-") != 0) {
             fprintf(stderr, RED "invalid option %s (see `rat --help`)\n" RESET, argv[i]);
             continue;
         }
