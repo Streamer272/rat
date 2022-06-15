@@ -16,6 +16,8 @@ int main(int argc, char *argv[]) {
     char **files = alloc(sizeof(char *) * argc);
 
     init_terminal();
+    enable_colors();
+    disable_colors();
 
     if (argc == 1) {
         print_file(stdin, FILE_OPTIONS_DEFAULT);
@@ -82,7 +84,9 @@ int main(int argc, char *argv[]) {
 
         // incorrect command
         if (argv[i][0] == '-' && strcmp(argv[i], "-") != 0) {
-            fprintf(stderr, RED "invalid option %s (see `rat --help`)\n" RESET, argv[i]);
+            char *message = colored("invalid option %s (see `rat --help`)\n", RED);
+            fprintf(stderr, message, argv[i]);
+            free(message);
             continue;
         }
 
@@ -106,7 +110,8 @@ int main(int argc, char *argv[]) {
         }
 
         if (file == NULL && stat(files[i], &stats) == -1) {
-            fprintf(stderr, RED "Couldn't open %s\n" RESET, files[i]);
+            char *message = colored("Couldn't open %s\n", RED);
+            fprintf(stderr, message, files[i]);
             continue;
         }
 
@@ -114,7 +119,9 @@ int main(int argc, char *argv[]) {
             for (int j = 0; j < LINE_NUMBER_WIDTH; j++) {
                 printf(" ");
             }
-            printf(BOLD "%s\n" RESET, files[i]);
+            char *message = colored("%s\n", BOLD);
+            printf(message, files[i]);
+            free(message);
         }
 
         // check if it is a file
@@ -122,7 +129,9 @@ int main(int argc, char *argv[]) {
             // TODO: add pattern matching (e.g. *.txt -> test.txt, test2.txt)
 
             if (file == NULL && (file = fopen(files[i], "r")) == NULL) {
-                fprintf(stderr, RED "Couldn't open file %s\n" RESET, files[i]);
+                char *message = colored("Couldn't open %s\n", RED);
+                fprintf(stderr, message, files[i]);
+                free(message);
                 continue;
             }
 

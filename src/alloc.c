@@ -23,6 +23,7 @@ void *ralloc(void *ptr, size_t size, size_t add_size) {
     for (int i = 0; i < size; i++) {
         ((char *) new_ptr)[i] = ((char *) ptr)[i];
     }
+    free(ptr);
 
     memset((void*) new_ptr + size, 0, add_size);
     return new_ptr;

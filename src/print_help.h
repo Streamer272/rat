@@ -15,6 +15,7 @@ void safe_print(const char *line);
 void safe_flush();
 size_t printable_len(char *line);
 void print_line(char *line);
+void print_arg(char *short_name, char *long_name, char *description);
 void print_help();
 
 #endif

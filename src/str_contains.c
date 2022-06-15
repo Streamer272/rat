@@ -55,7 +55,8 @@ char *highlight_needle(char *heystack, char *needle) {
     char *heystack_copy = NULL;
     int matches_count = 0;
     size_t **matches = str_matches(heystack, needle, &heystack_copy, &matches_count);
-    char *result = alloc(strlen(heystack) + matches_count * strlen(BLACK YELLOW_BG RESET) + 1);
+    char *color = join_strings(2, BLACK, YELLOW_BG);
+    char *result = alloc(strlen(heystack) + matches_count * (strlen(color) + strlen(RESET)) + 1);
 
     size_t *last_match_index = NULL;
     for (int i = 0; i < matches_count; i++) {
@@ -67,8 +68,8 @@ char *highlight_needle(char *heystack, char *needle) {
             strncat(result, heystack, match - heystack);
         last_match_index = match_index;
 
-        char *temp = alloc(strlen(needle) + strlen(BLACK YELLOW_BG RESET) + 1);
-        strcat(temp, BLACK YELLOW_BG);
+        char *temp = alloc(strlen(needle) + strlen(color) + strlen(RESET) + 1);
+        strcat(temp, color);
         strncat(temp, match, strlen(needle));
         strcat(temp, RESET);
 
@@ -78,6 +79,7 @@ char *highlight_needle(char *heystack, char *needle) {
 
     strcat(result, heystack + *last_match_index + strlen(needle));
 
+    free(color);
     for (int i = 0; matches[i] != NULL; i++) free(matches[i]);
     free(matches);
     free(heystack_copy);

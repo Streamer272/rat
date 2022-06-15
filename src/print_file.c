@@ -20,7 +20,9 @@ void print_line_number(int line_number) {
     for (unsigned int i = 0; i < spaces_start; i++) {
         printf(" ");
     }
-    printf(GREY "%s" RESET, line_number_str);
+    char *message = colored("%s", GREY);
+    printf(message, line_number_str);
+    free(message);
     for (unsigned int i = 0; i < spaces_end; i++) {
         printf(" ");
     }
@@ -60,6 +62,7 @@ void print_file(FILE *file, FILE_OPTIONS options) {
             }
 
             char *to_add = &ch;
+            bool needs_free = false;
             if (options.show_non_printable_chars) {
                 switch (ch) {
                     case '\t':
@@ -69,7 +72,8 @@ void print_file(FILE *file, FILE_OPTIONS options) {
                         to_add = "®";
                         break;
                     case '\v':
-                        to_add = UNDERLINE "\\v" RESET;
+                        to_add = colored("\\v", UNDERLINE);
+                        needs_free = true;
                         break;
                     case ' ':
                         to_add = "·";
@@ -79,6 +83,7 @@ void print_file(FILE *file, FILE_OPTIONS options) {
                 }
             }
             strcat(line, to_add);
+            if (needs_free) free(to_add);
         }
 
         if (ready) {
@@ -98,7 +103,9 @@ void print_file(FILE *file, FILE_OPTIONS options) {
                 char *prefix = highlight == line_number ? GREY_BG : NONE;
                 char *suffix = highlight == line_number ? RESET : NONE;
                 char *line_feed = ready ? (options.show_non_printable_chars ? "⏎\n" : "\n") : "\n";
-                printf("%s%s" RESET "%s%s", prefix, line, line_feed, suffix);
+                char *message = join_strings(3, "%s%s", RESET, "%s%s");
+                printf(message, prefix, line, line_feed, suffix);
+                free(message);
             }
 
             if (jump_back) goto back;
@@ -127,14 +134,12 @@ void print_file(FILE *file, FILE_OPTIONS options) {
         fflush(tmp_file);
         fclose(tmp_file);
 
-        // 27 is strlen(xclip  -selection clipboard)
-        char *command = alloc(strlen(tmp_filename + 27 + 1));
-        sprintf(command, "xclip %s -selection clipboard", tmp_filename);
-
+        char *command = join_strings(3, "xclip ", tmp_filename, " -selection clipboard");
         int exit_code = system(command);
         if (exit_code != 0) {
-            fprintf(stderr,
-                    RED "Couldn't copy to clipboard (make sure you have " ITALIC "xclip" RESET "installed)\n" RESET);
+            char *message = join_strings(7, RED, "Couldn't copy to clipboard (make sure you have ", ITALIC, "xclip", RESET, "installed)\n", RESET);
+            fprintf(stderr, "%s", message);
+            free(message);
         }
 
         free(command);

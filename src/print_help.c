@@ -31,7 +31,8 @@ void safe_print(const char *line) {
 void safe_flush() {
     if (buffer == NULL) return;
     if (is_terminal_small) {
-        fprintf(stderr, RED "Terminal is too small (required %zu, got %hu)\n" RESET, required_terminal_size, term_size.ws_col);
+        char *message = colored("Terminal is too small (required %zu, got %hu)\n", RED);
+        fprintf(stderr, message, required_terminal_size, term_size.ws_col);
         exit(EXIT_FAILURE);
     }
 
@@ -71,61 +72,86 @@ void print_line(char *line) {
         return;
     }
 
-    char *temp = alloc(sizeof(char) * 1024);
-    sprintf(temp, GREY "│" RESET "%s", line);
+    char *temp = join_strings(4, GREY, "│", RESET, line);
     safe_print(temp);
     free(temp);
     // 2 is strlen(│) + strlen(│)
     for (int i = 0; i < (int) ((int) term_size.ws_col) - printable_len(line) - 2; i++) {
         safe_print(" ");
     }
-    safe_print(GREY "│\n" RESET);
+    temp = colored("│\n", GREY);
+    safe_print(temp);
+    free(temp);
+}
+
+void print_arg(char *short_name, char *long_name, char *description) {
+    char *temp = join_strings(10, OFFSET, GREEN, short_name, RESET, " ", CYAN, long_name, RESET, OFFSET, description);
+    print_line(temp);
+    free(temp);
 }
 
 void print_help() {
     safe_print("\n");
-    safe_print("Usage: " BOLD "rat [OPTIONS] PATHS...\n" RESET);
+    char *temp = join_strings(4, "Usage: ", BOLD, "rat [OPTIONS] PATHS...\n", RESET);
+    safe_print(temp);
+    free(temp);
     safe_print("\n");
 
-    safe_print(GREY "┌ Options ");
+    temp = join_strings(2, GREY, "┌ Options ");
+    safe_print(temp);
+    free(temp);
     // 11 is strlen(┌ Options ) + strlen(┐)
     for (int i = 0; i < term_size.ws_col - 11; i++) {
         safe_print("─");
     }
-    safe_print("┐\n" RESET);
+    temp = join_strings(2, "┐\n", RESET);
+    safe_print(temp);
+    free(temp);
     print_empty_line();
 
-    print_line(BOLD "File options" RESET);
+    temp = colored("File options", BOLD);
+    print_line(temp);
+    free(temp);
     print_empty_line();
 
-    print_line(OFFSET GREEN "-n" RESET " " CYAN "--number             " RESET OFFSET "Print line numbers");
-    print_line(OFFSET GREEN "-C" RESET " " CYAN "--show-chars         " RESET OFFSET "Show nonprintable characters as ^SOMETHING");
-    print_line(OFFSET GREEN "-c" RESET " " CYAN "--clipboard          " RESET OFFSET "Write file content to clipboard instead of STDOUT");
-    print_line(OFFSET GREEN "-s" RESET " " CYAN "--start      <NUMBER>" RESET OFFSET "Line to start printing at");
-    print_line(OFFSET GREEN "-e" RESET " " CYAN "--end        <NUMBER>" RESET OFFSET "Line to end printing at");
-    print_line(OFFSET GREEN "-H" RESET " " CYAN "--highlight  <NUMBER>" RESET OFFSET "Line to highlight");
-    print_line(OFFSET GREEN "-f" RESET " " CYAN "--filter     <FILTER>" RESET OFFSET "Only print lines containing <FILTER>");
+    print_arg("-n", "--number             ", "Print line numbers");
+    print_arg("-C", "--show-chars         ", "Show nonprintable characters as ^SOMETHING");
+    print_arg("-c", "--clipboard          ", "Write file content to clipboard instead of STDOUT");
+    print_arg("-s", "--start      <NUMBER>", "Line to start printing at");
+    print_arg("-e", "--end        <NUMBER>", "Line to end printing at");
+    print_arg("-H", "--highlight  <NUMBER>", "Line to highlight");
+    print_arg("-f", "--filter     <FILTER>", "Only print lines containing <FILTER>");
 
     print_empty_line();
-    print_line(BOLD "Directory options" RESET);
+    temp = colored("Directory options", BOLD);
+    print_line(temp);
+    free(temp);
     print_empty_line();
 
-    print_line(GREEN "TODO" RESET);
+    temp = colored("TODO", BOLD);
+    print_line(temp);
+    free(temp);
 
     print_empty_line();
-    print_line(BOLD "Commands" RESET);
+    temp = colored("Commands", BOLD);
+    print_line(temp);
+    free(temp);
     print_empty_line();
 
-    print_line(OFFSET GREEN "-v" RESET " " CYAN "--version            " RESET OFFSET "Print version and exit");
-    print_line(OFFSET GREEN "-h" RESET " " CYAN "--help               " RESET OFFSET "Print help message and exit");
+    print_arg("-v", "--version            ", "Print version and exit");
+    print_arg("-h", "--help               ", "Print help message and exit");
 
     print_empty_line();
-    safe_print(GREY "└");
+    temp = join_strings(2, GREY, "└");
+    safe_print(temp);
+    free(temp);
     // 2 is strlen(└) + strlen(┘)
     for (int i = 0; i < term_size.ws_col - 2; i++) {
         safe_print("─");
     }
-    safe_print("┘\n" RESET);
+    temp = join_strings(2, "┘\n", RESET);
+    safe_print(temp);
+    free(temp);
     safe_print("\n");
 
     safe_flush();
