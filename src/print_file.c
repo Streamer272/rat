@@ -1,11 +1,10 @@
-#define _GNU_SOURCE
-
 #include "print_file.h"
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
 #include <limits.h>
 #include "alloc.h"
+#include "str_contains.h"
 #include "def/style.h"
 
 void print_line_number(int line_number) {
@@ -86,7 +85,7 @@ void print_file(FILE *file, FILE_OPTIONS options) {
             print_line:;
             bool is_start = line_number >= start;
             bool is_end = line_number <= end;
-            bool is_filtered = strcmp(options.filter, "") != 0 ? strcasestr(line, options.filter) != NULL : true;
+            bool is_filtered = strcmp(options.filter, "") != 0 ? str_contains(line, options.filter) : true;
 
             if (is_start && is_end && is_filtered) {
                 if (options.show_line_number) print_line_number(line_number);
