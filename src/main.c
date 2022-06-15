@@ -110,13 +110,11 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
-        // TODO: fix filename not visible
-        if (file_count > 2) {
-            // 6 is strlen(--  --)
-            for (int j = 0; j < ((term_size.ws_col - strlen(files[i]) - 6) / 2 >> 1 << 1); j++) {
+        if (file_count > 1) {
+            for (int j = 0; j < LINE_NUMBER_WIDTH; j++) {
                 printf(" ");
             }
-            printf(GREY "-- " BOLD "%s" RESET " --\n" RESET, files[i]);
+            printf(BOLD "%s\n" RESET, files[i]);
         }
 
         // check if it is a file
@@ -137,7 +135,7 @@ int main(int argc, char *argv[]) {
             print_dir(files[i], dir_options);
         }
 
-        if (file_count > 2) {
+        if (file_count > 1 && i != file_count - 1) {
             printf("\n");
         }
     }
