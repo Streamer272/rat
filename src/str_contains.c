@@ -51,6 +51,7 @@ bool str_contains(char *heystack, char *needle) {
     return i > 0;
 }
 
+// TODO: fix filter fucks up line highlighting
 char *highlight_needle(char *heystack, char *needle) {
     char *heystack_copy = NULL;
     int matches_count = 0;
