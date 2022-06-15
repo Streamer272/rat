@@ -5,6 +5,7 @@
 
 #define RESET style("0")
 #define BOLD style("1")
+#define ITALIC style("3")
 #define UNDERLINE style("4")
 #define RED style("31")
 #define GREEN style("32")

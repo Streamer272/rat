@@ -28,11 +28,16 @@ void print_line_number(int line_number) {
 }
 
 void print_file(FILE *file, FILE_OPTIONS options) {
-    // TODO: implement copy to clipboard with tmpnam(NULL), freopen(tmp_file, "w+", stdout) remove(tmp_file), popen("xclip -in -selection clipboard", "w") and fprintf(xclip_pipe, tmp_file_content)
+    char *tmp_filename = NULL;
+    FILE *tmp_file = NULL;
+    if (options.copy_to_clipboard) {
+        tmp_filename = tmpnam(NULL);
+        tmp_file = freopen(tmp_filename, "w+", stdout);
+    }
 
     int line_number = 1;
     size_t line_size = LINE_SIZE;
-    char *line = alloc(line_size);
+    char *line = alloc(line_size + 1);
     long start = 1;
     if (strcmp(options.start, "") != 0) start = strtol(options.start, NULL, 10);
     long end = LONG_MAX;
@@ -47,7 +52,7 @@ void print_file(FILE *file, FILE_OPTIONS options) {
             next_line = true;
         } else {
             if (i >= line_size) {
-                line = ralloc(line, line_size, LINE_SIZE);
+                line = ralloc(line, line_size + 1, LINE_SIZE);
                 line_size += LINE_SIZE;
             }
 
@@ -98,4 +103,21 @@ void print_file(FILE *file, FILE_OPTIONS options) {
     }
 
     free(line);
+
+    if (options.copy_to_clipboard) {
+        fflush(tmp_file);
+        fclose(tmp_file);
+
+        // 27 is strlen(xclip  -selection clipboard)
+        char *command = alloc(strlen(tmp_filename + 27 + 1));
+        sprintf(command, "xclip %s -selection clipboard", tmp_filename);
+
+        int exit_code = system(command);
+        if (exit_code != 0) {
+            fprintf(stderr, RED "Couldn't copy to clipboard (make sure you have " ITALIC "xclip" RESET "installed)\n" RESET);
+        }
+
+        free(command);
+        remove(tmp_filename);
+    }
 }
