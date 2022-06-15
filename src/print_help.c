@@ -12,6 +12,9 @@ char *buffer = NULL;
 unsigned int buffer_current_size = 0;
 unsigned int buffer_max_size_coefficient = 1;
 
+bool is_terminal_small = false;
+size_t required_terminal_size = 2;  // 2 is strlen(││)
+
 void safe_print(const char *line) {
     if (line == NULL) return;
 
@@ -27,6 +30,10 @@ void safe_print(const char *line) {
 
 void safe_flush() {
     if (buffer == NULL) return;
+    if (is_terminal_small) {
+        fprintf(stderr, RED "Terminal is too small (required %zu, got %hu)\n" RESET, required_terminal_size, term_size.ws_col);
+        exit(EXIT_FAILURE);
+    }
 
     printf("%s", buffer);
     free(buffer);
@@ -59,8 +66,9 @@ void print_line(char *line) {
     // TODO: add printing output on next line if terminal is too small
 
     if (term_size.ws_col < printable_len(line) + 2) {
-        fprintf(stderr, "Terminal is too small\n");
-        exit(EXIT_FAILURE);
+        is_terminal_small = true;
+        if (required_terminal_size < printable_len(line) + 2) required_terminal_size = printable_len(line) + 2;
+        return;
     }
 
     char *temp = alloc(sizeof(char) * 1024);
@@ -68,7 +76,7 @@ void print_line(char *line) {
     safe_print(temp);
     free(temp);
     // 2 is strlen(│) + strlen(│)
-    for (int i = 0; i < ((int) term_size.ws_col) - printable_len(line) - 2; i++) {
+    for (int i = 0; i < (int) ((int) term_size.ws_col) - printable_len(line) - 2; i++) {
         safe_print(" ");
     }
     safe_print(GREY "│\n" RESET);
