@@ -91,17 +91,18 @@ void print_file(FILE *file, FILE_OPTIONS options) {
             bool is_start = line_number >= start;
             bool is_end = line_number <= end;
             bool is_filtered = strcmp(options.filter, "") != 0 ? str_contains(line, options.filter) : true;
+            bool is_highlighted = line_number == highlight;
 
             if (is_filtered) {
-                char *highlighted = highlight_needle(line, options.filter);
+                char *highlighted = highlight_needle(line, options.filter, is_highlighted);
                 free(line);
                 line = highlighted;
             }
 
             if (is_start && is_end && is_filtered) {
                 if (options.show_line_number) print_line_number(line_number);
-                char *prefix = highlight == line_number ? GREY_BG : NONE;
-                char *suffix = highlight == line_number ? RESET : NONE;
+                char *prefix = is_highlighted ? GREY_BG : NONE;
+                char *suffix = is_highlighted ? RESET : NONE;
                 char *line_feed = ready ? (options.show_non_printable_chars ? "⏎\n" : "\n") : "\n";
                 char *message = join_strings(3, "%s%s", RESET, "%s%s");
                 printf(message, prefix, line, line_feed, suffix);

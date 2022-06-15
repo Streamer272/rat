@@ -51,13 +51,15 @@ bool str_contains(char *heystack, char *needle) {
     return i > 0;
 }
 
-// TODO: fix filter fucks up line highlighting
-char *highlight_needle(char *heystack, char *needle) {
+char *highlight_needle(char *heystack, char *needle, bool is_highlighted) {
+    if (heystack == NULL) return NULL;
+    if (needle == NULL) return NULL;
+
     char *heystack_copy = NULL;
     int matches_count = 0;
     size_t **matches = str_matches(heystack, needle, &heystack_copy, &matches_count);
     char *color = join_strings(2, BLACK, YELLOW_BG);
-    char *result = alloc(strlen(heystack) + matches_count * (strlen(color) + strlen(RESET)) + 1);
+    char *result = alloc(strlen(heystack) + matches_count * (strlen(color) + strlen(GREY_BG) + strlen(RESET)) + 1);
 
     size_t *last_match_index = NULL;
     for (int i = 0; i < matches_count; i++) {
@@ -69,16 +71,19 @@ char *highlight_needle(char *heystack, char *needle) {
             strncat(result, heystack, match - heystack);
         last_match_index = match_index;
 
-        char *temp = alloc(strlen(needle) + strlen(color) + strlen(RESET) + 1);
+        char *temp = alloc(strlen(needle) + strlen(color) + strlen(GREY_BG) + strlen(RESET) + 1);
         strcat(temp, color);
         strncat(temp, match, strlen(needle));
         strcat(temp, RESET);
+        if (is_highlighted) strcat(temp, GREY_BG);
 
         strcat(result, temp);
         free(temp);
     }
 
-    strcat(result, heystack + *last_match_index + strlen(needle));
+    unsigned long rest_start = 0;
+    if (last_match_index != NULL) rest_start = *last_match_index + strlen(needle);
+    strcat(result, heystack + rest_start);
 
     free(color);
     for (int i = 0; matches[i] != NULL; i++) free(matches[i]);
