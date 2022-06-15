@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include "print_file.h"
 #include <stdlib.h>
 #include <string.h>
@@ -48,6 +50,7 @@ void print_file(FILE *file, FILE_OPTIONS options) {
     int i = 0;
     char ch;
     bool ready = false;
+    bool jump_back = false;
     while ((ch = (char) getc(file)) != EOF) {
         if (ch == '\n') {
             ready = true;
@@ -80,13 +83,20 @@ void print_file(FILE *file, FILE_OPTIONS options) {
         }
 
         if (ready) {
-            if (line_number >= start && line_number <= end) {
+            print_line:;
+            bool is_start = line_number >= start;
+            bool is_end = line_number <= end;
+            bool is_filtered = strcmp(options.filter, "") != 0 ? strcasestr(line, options.filter) != NULL : true;
+
+            if (is_start && is_end && is_filtered) {
                 if (options.show_line_number) print_line_number(line_number);
                 char *prefix = highlight == line_number ? HIGHLIGHT_BG: NONE;
                 char *suffix = highlight == line_number ? RESET : NONE;
-                char *line_feed = options.show_non_printable_chars ? "⏎\n" : "\n";
+                char *line_feed = ready ? (options.show_non_printable_chars ? "⏎\n" : "\n") : "\n";
                 printf("%s%s" RESET "%s%s", prefix, line, line_feed, suffix);
             }
+
+            if (jump_back) goto back;
 
             i = 0;
             ch = 0;
@@ -101,11 +111,9 @@ void print_file(FILE *file, FILE_OPTIONS options) {
     }
 
     if (strcmp(line, "") != 0) {
-        if (options.show_line_number) print_line_number(line_number);
-        char *prefix = highlight == line_number ? HIGHLIGHT_BG: NONE;
-        char *suffix = highlight == line_number ? RESET : NONE;
-        char *line_feed = ready ? (options.show_non_printable_chars ? "⏎\n" : "\n") : "";
-        printf("%s%s" RESET "%s%s", prefix, line, line_feed, suffix);
+        jump_back = true;
+        goto print_line;
+        back:;
     }
 
     free(line);

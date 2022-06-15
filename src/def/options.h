@@ -7,6 +7,7 @@ typedef struct {
     bool show_line_number;
     bool show_non_printable_chars;
     bool copy_to_clipboard;
+    // TODO: implement negative numbers for start and end
     char *start;
     char *end;
     char *highlight_line;
