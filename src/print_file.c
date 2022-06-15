@@ -87,9 +87,15 @@ void print_file(FILE *file, FILE_OPTIONS options) {
             bool is_end = line_number <= end;
             bool is_filtered = strcmp(options.filter, "") != 0 ? str_contains(line, options.filter) : true;
 
+            if (is_filtered) {
+                char *highlighted = highlight_needle(line, options.filter);
+                printf("highlighted '%s' in original '%s' with filter '%s'\n", highlighted, line, options.filter);
+                free(highlighted);
+            }
+
             if (is_start && is_end && is_filtered) {
                 if (options.show_line_number) print_line_number(line_number);
-                char *prefix = highlight == line_number ? HIGHLIGHT_BG: NONE;
+                char *prefix = highlight == line_number ? GREY_BG : NONE;
                 char *suffix = highlight == line_number ? RESET : NONE;
                 char *line_feed = ready ? (options.show_non_printable_chars ? "⏎\n" : "\n") : "\n";
                 printf("%s%s" RESET "%s%s", prefix, line, line_feed, suffix);
@@ -127,7 +133,8 @@ void print_file(FILE *file, FILE_OPTIONS options) {
 
         int exit_code = system(command);
         if (exit_code != 0) {
-            fprintf(stderr, RED "Couldn't copy to clipboard (make sure you have " ITALIC "xclip" RESET "installed)\n" RESET);
+            fprintf(stderr,
+                    RED "Couldn't copy to clipboard (make sure you have " ITALIC "xclip" RESET "installed)\n" RESET);
         }
 
         free(command);
