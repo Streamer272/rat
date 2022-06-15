@@ -3,13 +3,13 @@
 #include <stdbool.h>
 #include <string.h>
 #include <sys/stat.h>
-#include "term.h"
 #include "print_help.h"
 #include "print_file.h"
 #include "print_dir.h"
 #include "def/program.h"
 #include "def/style.h"
-#include "alloc.h"
+#include "def/term.h"
+#include "def/alloc.h"
 
 int main(int argc, char *argv[]) {
     int file_count = 0;
@@ -17,7 +17,6 @@ int main(int argc, char *argv[]) {
 
     init_terminal();
     enable_colors();
-    disable_colors();
 
     if (argc == 1) {
         print_file(stdin, FILE_OPTIONS_DEFAULT);

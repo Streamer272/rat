@@ -3,7 +3,7 @@
 #include <string.h>
 #include <malloc.h>
 #include <limits.h>
-#include "alloc.h"
+#include "def/alloc.h"
 #include "str_contains.h"
 #include "def/style.h"
 

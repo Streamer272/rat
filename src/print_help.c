@@ -5,8 +5,8 @@
 #include <string.h>
 #include <ctype.h>
 #include "def/style.h"
-#include "term.h"
-#include "alloc.h"
+#include "def/term.h"
+#include "def/alloc.h"
 
 char *buffer = NULL;
 unsigned int buffer_current_size = 0;

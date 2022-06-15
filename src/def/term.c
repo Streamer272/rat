@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "def/style.h"
+#include "style.h"
 
 struct winsize term_size;
 

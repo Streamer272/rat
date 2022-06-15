@@ -2,7 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <malloc.h>
-#include "alloc.h"
+#include "def/alloc.h"
 #include "def/style.h"
 
 size_t **str_matches(char *heystack, char *needle, char **heystack_copy, int *matches_count) {
