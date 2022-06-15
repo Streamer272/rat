@@ -11,5 +11,8 @@
 #define GREEN style("32")
 #define CYAN style("36")
 #define GREY style("38;2;153;153;153")
+#define HIGHLIGHT_BG style("48;2;69;69;69")
+
+#define NONE ""
 
 #endif

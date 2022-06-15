@@ -9,7 +9,7 @@
 void print_line_number(int line_number) {
     char *line_number_str = alloc(sizeof(char) * LINE_NUMBER_WIDTH);
     sprintf(line_number_str, "%d", line_number);
-    unsigned int line_number_str_len = (unsigned int) strlen(line_number_str);
+    size_t line_number_str_len = strlen(line_number_str);
 
     unsigned int spaces_start = (LINE_NUMBER_WIDTH - line_number_str_len) / 2;
     if ((LINE_NUMBER_WIDTH - line_number_str_len) % 2 == 1) spaces_start++;
@@ -42,14 +42,15 @@ void print_file(FILE *file, FILE_OPTIONS options) {
     if (strcmp(options.start, "") != 0) start = strtol(options.start, NULL, 10);
     long end = LONG_MAX;
     if (strcmp(options.end, "") != 0) end = strtol(options.end, NULL, 10);
+    long highlight = 0;
+    if (strcmp(options.highlight_line, "") != 0) highlight = strtol(options.highlight_line, NULL, 10);
 
     int i = 0;
     char ch;
-    bool next_line = false;
+    bool ready = false;
     while ((ch = (char) getc(file)) != EOF) {
         if (ch == '\n') {
-            strcat(line, options.show_non_printable_chars ? "⏎\n" : "\n");
-            next_line = true;
+            ready = true;
         } else {
             if (i >= line_size) {
                 line = ralloc(line, line_size + 1, LINE_SIZE);
@@ -78,15 +79,18 @@ void print_file(FILE *file, FILE_OPTIONS options) {
             strcat(line, to_add);
         }
 
-        if (next_line) {
+        if (ready) {
             if (line_number >= start && line_number <= end) {
                 if (options.show_line_number) print_line_number(line_number);
-                printf("%s", line);
+                char *prefix = highlight == line_number ? HIGHLIGHT_BG: NONE;
+                char *suffix = highlight == line_number ? RESET : NONE;
+                char *line_feed = options.show_non_printable_chars ? "⏎\n" : "\n";
+                printf("%s%s" RESET "%s%s", prefix, line, line_feed, suffix);
             }
 
             i = 0;
             ch = 0;
-            next_line = false;
+            ready = false;
             line_number++;
             free(line);
             line_size = LINE_SIZE;
@@ -98,8 +102,10 @@ void print_file(FILE *file, FILE_OPTIONS options) {
 
     if (strcmp(line, "") != 0) {
         if (options.show_line_number) print_line_number(line_number);
-        printf("%s", line);
-        if (next_line) printf(options.show_non_printable_chars ? "⏎\n" : "\n");
+        char *prefix = highlight == line_number ? HIGHLIGHT_BG: NONE;
+        char *suffix = highlight == line_number ? RESET : NONE;
+        char *line_feed = ready ? (options.show_non_printable_chars ? "⏎\n" : "\n") : "";
+        printf("%s%s" RESET "%s%s", prefix, line, line_feed, suffix);
     }
 
     free(line);
