@@ -1,5 +1,4 @@
 #include "str_contains.h"
-#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <malloc.h>
@@ -61,24 +60,22 @@ char *highlight_needle(char *heystack, char *needle) {
     for (int i = 0; matches[i] != NULL; i++) {
         size_t *match_index = matches[i];
         char *match = heystack + *match_index;
-        if (last_match_index != NULL) {
-            strncat(result, heystack + *last_match_index + strlen(needle),
-                    (unsigned long) (match - *last_match_index));
-        }
-        else {
+        if (last_match_index != NULL)
+            strncat(result, heystack + *last_match_index + strlen(needle), *match_index - *last_match_index - strlen(needle));
+        else
             strncat(result, heystack, match - heystack);
-        }
         last_match_index = match_index;
 
-        char *temp = alloc(strlen(match) + strlen(BLACK YELLOW_BG RESET) + 1);
+        char *temp = alloc(strlen(needle) + strlen(BLACK YELLOW_BG RESET) + 1);
         strcat(temp, BLACK YELLOW_BG);
         strncat(temp, match, strlen(needle));
         strcat(temp, RESET);
-        strcat(temp, match + strlen(needle));
 
         strcat(result, temp);
         free(temp);
     }
+
+    strcat(result, heystack + *last_match_index + strlen(needle));
 
     for (int i = 0; matches[i] != NULL; i++) free(matches[i]);
     free(matches);
