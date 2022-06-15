@@ -15,8 +15,8 @@ int main(int argc, char *argv[]) {
     int file_count = 0;
     char **files = alloc(sizeof(char *) * argc);
 
+    init_colors();
     init_terminal();
-    enable_colors();
 
     if (argc == 1) {
         print_file(stdin, FILE_OPTIONS_DEFAULT);

@@ -1,6 +1,7 @@
 #ifndef RAT_STYLE_H
 #define RAT_STYLE_H
 
+#define init_colors() enable_colors()
 #define style(code) "\e[" code "m"
 
 extern char *RESET;
