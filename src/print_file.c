@@ -89,8 +89,8 @@ void print_file(FILE *file, FILE_OPTIONS options) {
 
             if (is_filtered) {
                 char *highlighted = highlight_needle(line, options.filter);
-                printf("highlighted '%s' in original '%s' with filter '%s'\n", highlighted, line, options.filter);
-                free(highlighted);
+                free(line);
+                line = highlighted;
             }
 
             if (is_start && is_end && is_filtered) {

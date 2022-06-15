@@ -6,7 +6,7 @@
 #include "alloc.h"
 #include "def/style.h"
 
-char **str_matches(char *heystack, char **heystack_copy, char *needle) {
+size_t **str_matches(char *heystack, char **heystack_copy, char *needle) {
     if (heystack == NULL) return NULL;
     if (needle == NULL) return NULL;
 
@@ -14,21 +14,21 @@ char **str_matches(char *heystack, char **heystack_copy, char *needle) {
     strcpy(*heystack_copy, heystack);
     char *needle_copy = alloc(sizeof(needle));
     strcpy(needle_copy, needle);
-    char **result = alloc(sizeof(char *) * (strlen(heystack) / strlen(needle)));
+    size_t **result = alloc(sizeof(char *) * (strlen(heystack) / strlen(needle)));
 
     for (int i = 0; i < strlen(*heystack_copy); i++) (*heystack_copy)[i] = (char) toupper((*heystack_copy)[i]);
     for (int i = 0; i < strlen(needle_copy); i++) needle_copy[i] = (char) toupper(needle_copy[i]);
 
     int index = 0;
-    size_t char_index = 0;
+    size_t char_index;
     char *temp = strstr(*heystack_copy, needle_copy);
     while (temp != NULL) {
-        char *copy = alloc(strlen(temp) + 1);
-        strcpy(copy, temp);
-        result[index] = copy;
-        index++;
+        size_t *memory = alloc(sizeof(size_t));
         char_index = temp - *heystack_copy;
-        printf("found (%p - %p) %s at %zu\n", temp, *heystack_copy, temp, char_index);
+        *memory = char_index;
+        result[index] = memory;
+
+        index++;
         temp = strstr(temp + strlen(needle_copy), needle_copy);
     }
 
@@ -39,11 +39,11 @@ char **str_matches(char *heystack, char **heystack_copy, char *needle) {
 
 bool str_contains(char *heystack, char *needle) {
     char *heystack_copy = NULL;
-    char **matches = str_matches(heystack, &heystack_copy, needle);
+    size_t **matches = str_matches(heystack, &heystack_copy, needle);
     if (matches == NULL) return false;
 
     int i;
-    for (i = 0; matches[i] != NULL; i++);
+    for (i = 0; matches[i] != NULL; i++) free(matches[i]);
     free(matches);
     free(heystack_copy);
 
@@ -52,20 +52,23 @@ bool str_contains(char *heystack, char *needle) {
 
 char *highlight_needle(char *heystack, char *needle) {
     char *heystack_copy = NULL;
-    char **matches = str_matches(heystack, &heystack_copy, needle);
+    size_t **matches = str_matches(heystack, &heystack_copy, needle);
     int matches_count;
     for (matches_count = 0; matches[matches_count] != NULL; matches_count++);
     char *result = alloc(strlen(heystack) + matches_count * strlen(BLACK YELLOW_BG RESET) + 1);
 
-    char *last_match = NULL;
+    size_t *last_match_index = NULL;
     for (int i = 0; matches[i] != NULL; i++) {
-        char *match = matches[i];
-        int match_index = match - heystack_copy;
-        printf("%p (%s) - %p (%s) = %d\n", match, match, heystack_copy, heystack_copy, match_index);
-        if (last_match != NULL) {
-            strncat(result, last_match + strlen(needle), match - last_match);
+        size_t *match_index = matches[i];
+        char *match = heystack + *match_index;
+        if (last_match_index != NULL) {
+            strncat(result, heystack + *last_match_index + strlen(needle),
+                    (unsigned long) (match - *last_match_index));
         }
-        last_match = match;
+        else {
+            strncat(result, heystack, match - heystack);
+        }
+        last_match_index = match_index;
 
         char *temp = alloc(strlen(match) + strlen(BLACK YELLOW_BG RESET) + 1);
         strcat(temp, BLACK YELLOW_BG);
@@ -77,6 +80,7 @@ char *highlight_needle(char *heystack, char *needle) {
         free(temp);
     }
 
+    for (int i = 0; matches[i] != NULL; i++) free(matches[i]);
     free(matches);
     free(heystack_copy);
 
