@@ -7,8 +7,10 @@ typedef struct {
     bool show_line_number;
     bool show_non_printable_chars;
     bool copy_to_clipboard;
+    // TODO: change -end to end=line_count+end, add +end (original -end functionality)
     char *start;
     char *end;
+    char *take; // how many lines to print
     char *highlight_line;
     char *filter;
 } FILE_OPTIONS;

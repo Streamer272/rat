@@ -119,6 +119,7 @@ void print_help() {
     print_arg("-c", "--clipboard          ", "Write file content to clipboard instead of STDOUT");
     print_arg("-s", "--start      <NUMBER>", "Line to start printing at");
     print_arg("-e", "--end        <NUMBER>", "Line to end printing at");
+    print_arg("-t", "--take       <NUMBER>", "Number of lines to print");
     print_arg("-H", "--highlight  <NUMBER>", "Line to highlight");
     print_arg("-f", "--filter     <FILTER>", "Only print lines containing <FILTER>");
 

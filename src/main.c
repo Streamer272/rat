@@ -49,22 +49,27 @@ int main(int argc, char *argv[]) {
             continue;
         }
         else if (strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "--start") == 0) {
-            file_options.start = alloc(sizeof(char) * strlen(argv[i + 1]));
+            file_options.start = alloc(sizeof(char) * strlen(argv[i + 1]) + 1);
             value = file_options.start;
             continue;
         }
         else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "--end") == 0) {
-            file_options.end = alloc(sizeof(char) * strlen(argv[i + 1]));
+            file_options.end = alloc(sizeof(char) * strlen(argv[i + 1]) + 1);
             value = file_options.end;
             continue;
         }
+        else if (strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "--take") == 0) {
+            file_options.take = alloc(sizeof(char) * strlen(argv[i + 1]) + 1);
+            value = file_options.take;
+            continue;
+        }
         else if (strcmp(argv[i], "-H") == 0 || strcmp(argv[i], "--highlight") == 0) {
-            file_options.highlight_line = alloc(sizeof(char) * strlen(argv[i + 1]));
+            file_options.highlight_line = alloc(sizeof(char) * strlen(argv[i + 1]) + 1);
             value = file_options.highlight_line;
             continue;
         }
         else if (strcmp(argv[i], "-f") == 0 || strcmp(argv[i], "--filter") == 0) {
-            file_options.filter = alloc(sizeof(char) * strlen(argv[i + 1]));
+            file_options.filter = alloc(sizeof(char) * strlen(argv[i + 1]) + 1);
             value = file_options.filter;
             continue;
         }

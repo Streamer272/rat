@@ -54,11 +54,15 @@ void print_file(FILE *file, FILE_OPTIONS options) {
     int line_number = 1;
     size_t line_size = LINE_SIZE;
     long line_count = get_line_count(file);
+    long took_lines = 0;
     char *line = alloc(line_size + 1);
+
     long start = 1;
     if (strcmp(options.start, "") != 0) start = strtol(options.start, NULL, 10);
     long end = LONG_MAX;
     if (strcmp(options.end, "") != 0) end = strtol(options.end, NULL, 10);
+    long take = end - start + 1;
+    if (strcmp(options.take, "") != 0) take = strtol(options.take, NULL, 10);
     long highlight = 0;
     if (strcmp(options.highlight_line, "") != 0) highlight = strtol(options.highlight_line, NULL, 10);
 
@@ -116,7 +120,14 @@ void print_file(FILE *file, FILE_OPTIONS options) {
             if (needs_filter) is_filtered = str_contains(line, options.filter);
             bool is_highlighted = line_number == highlight;
 
-            if (needs_filter == is_filtered) {
+            bool needs_break = false;
+
+            if (is_start && is_end && (needs_filter ? is_filtered : true) && !jump_back) {
+                took_lines++;
+                if (took_lines >= take) needs_break = true;
+            }
+
+            if (needs_filter ? is_filtered : false) {
                 char *highlighted = highlight_needle(line, options.filter, is_highlighted);
                 free(line);
                 line = highlighted;
@@ -133,6 +144,10 @@ void print_file(FILE *file, FILE_OPTIONS options) {
             }
 
             if (jump_back) goto back;
+            if (needs_break) {
+                sprintf(line, "%s", "");
+                break;
+            }
 
             i = 0;
             ch = 0;
@@ -161,7 +176,7 @@ void print_file(FILE *file, FILE_OPTIONS options) {
         char *command = join_strings(3, "xclip ", tmp_filename, " -selection clipboard");
         int exit_code = system(command);
         if (exit_code != 0) {
-            char *message = join_strings(7, RED, "Couldn't copy to clipboard (make sure you have ", ITALIC, "xclip", RESET, "installed)\n", RESET);
+            char *message = join_strings(8, RED, "Couldn't copy to clipboard (make sure you have ", ITALIC, "xclip", RESET, RED, "installed)\n", RESET);
             fprintf(stderr, "%s", message);
             free(message);
         }
