@@ -107,10 +107,10 @@ void print_file(FILE *file, FILE_OPTIONS options) {
             print_line:;
             bool is_start = false;
             if (start >= 0) is_start = line_number >= start;
-            else if (start < 0) perror("TODO");
+            else if (start < 0) is_start = line_count - line_number + 1 <= -start;
             bool is_end = false;
             if (end >= 0) is_end = line_number <= end;
-            else if (end < 0) perror("TODO");
+            else if (end < 0) is_end = line_number <= -end;
             bool needs_filter = strcmp(options.filter, "") != 0;
             bool is_filtered = true;
             if (needs_filter) is_filtered = str_contains(line, options.filter);
