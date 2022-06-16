@@ -7,7 +7,10 @@
 struct winsize term_size;
 
 void init_terminal() {
+    // output is redirected to file (rat file >> file2)
     if (isatty(STDOUT_FILENO) == 0) {
+        disable_colors();
+
         term_size.ws_col = 80;
         term_size.ws_row = 80;
         return;

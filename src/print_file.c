@@ -7,6 +7,19 @@
 #include "str_contains.h"
 #include "def/style.h"
 
+long get_line_count(FILE *file) {
+    long line_count = 0;
+    char ch;
+
+    while (!feof(file)) {
+        ch = (char) getc(file);
+        if (ch == '\n') line_count++;
+    }
+    rewind(file);
+
+    return line_count;
+}
+
 void print_line_number(int line_number) {
     char *line_number_str = alloc(sizeof(char) * LINE_NUMBER_WIDTH);
     sprintf(line_number_str, "%d", line_number);
@@ -40,6 +53,7 @@ void print_file(FILE *file, FILE_OPTIONS options) {
 
     int line_number = 1;
     size_t line_size = LINE_SIZE;
+    long line_count = get_line_count(file);
     char *line = alloc(line_size + 1);
     long start = 1;
     if (strcmp(options.start, "") != 0) start = strtol(options.start, NULL, 10);
@@ -52,7 +66,10 @@ void print_file(FILE *file, FILE_OPTIONS options) {
     char ch;
     bool ready = false;
     bool jump_back = false;
-    while ((ch = (char) getc(file)) != EOF) {
+    while (true) {
+        ch = (char) getc(file);
+        if (feof(file)) break;
+
         if (ch == '\n') {
             ready = true;
         } else {
@@ -88,18 +105,24 @@ void print_file(FILE *file, FILE_OPTIONS options) {
 
         if (ready) {
             print_line:;
-            bool is_start = line_number >= start;
-            bool is_end = line_number <= end;
-            bool is_filtered = strcmp(options.filter, "") != 0 ? str_contains(line, options.filter) : true;
+            bool is_start = false;
+            if (start >= 0) is_start = line_number >= start;
+            else if (start < 0) perror("TODO");
+            bool is_end = false;
+            if (end >= 0) is_end = line_number <= end;
+            else if (end < 0) perror("TODO");
+            bool needs_filter = strcmp(options.filter, "") != 0;
+            bool is_filtered = true;
+            if (needs_filter) is_filtered = str_contains(line, options.filter);
             bool is_highlighted = line_number == highlight;
 
-            if (is_filtered) {
+            if (needs_filter == is_filtered) {
                 char *highlighted = highlight_needle(line, options.filter, is_highlighted);
                 free(line);
                 line = highlighted;
             }
 
-            if (is_start && is_end && is_filtered) {
+            if (is_start && is_end && (needs_filter ? is_filtered : true)) {
                 if (options.show_line_number) print_line_number(line_number);
                 char *prefix = is_highlighted ? GREY_BG : NONE;
                 char *suffix = is_highlighted ? RESET : NONE;

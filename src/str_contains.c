@@ -8,6 +8,7 @@
 size_t **str_matches(char *heystack, char *needle, char **heystack_copy, int *matches_count) {
     if (heystack == NULL) return NULL;
     if (needle == NULL) return NULL;
+    if (strcmp(needle, "") == 0) return NULL;
 
     *heystack_copy = alloc(sizeof(heystack));
     strcpy(*heystack_copy, heystack);
