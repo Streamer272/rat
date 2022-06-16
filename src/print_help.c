@@ -45,19 +45,34 @@ void print_line(char *line) {
 
         printf("%s\n", temp);
         free(temp);
-    }
-    else {
+    } else {
         char *border = colored("│", GREY);
 
         int can_print = term_size.ws_col - 2;
         int remaining = can_print;
         bool is_color = false;
+        bool new_line = false;
         for (int i = 0; i < strlen(line); i++) {
             if (remaining == can_print) {
                 printf("%s", border);
             }
 
             char ch = line[i];
+            if (ch == ' ') {
+                int next_word_length = 0;
+                for (int j = i + 1; j < strlen(line); j++) {
+                    char next_ch = line[j];
+
+                    if (next_ch >= 33 && next_ch <= 126)
+                        next_word_length++;
+                    else
+                        break;
+                }
+
+                if (next_word_length > remaining)
+                    new_line = true;
+            }
+
             printf("%c", ch);
 
             if (is_color) {
@@ -69,6 +84,16 @@ void print_line(char *line) {
             }
 
             if (isprint(ch)) remaining--;
+
+            if (new_line) {
+                for (int j = 0; j < remaining; j++) {
+                    printf(" ");
+                }
+                printf("%s\n", border);
+
+                remaining = can_print;
+                new_line = false;
+            }
 
             if (remaining == 0) {
                 printf("%s\n", border);
@@ -133,7 +158,7 @@ void print_help() {
     print_arg("-e", "--end        <NUMBER>", "Line to end printing at");
     print_arg("-t", "--take       <NUMBER>", "Number of lines to print");
     print_arg("-H", "--highlight  <NUMBER>", "Line to highlight");
-    print_arg("-f", "--filter     <FILTER>", "Only print lines containing <FILTER>");
+    print_arg("-f", "--filter     <FILTER>", "Only print lines containing FILTER");
     print_empty_line();
 
     // dir options
