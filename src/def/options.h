@@ -7,7 +7,6 @@ typedef struct {
     bool show_line_number;
     bool show_non_printable_chars;
     bool copy_to_clipboard;
-    // TODO: change -end to end=line_count+end, add +end (original -end functionality)
     char *start;
     char *end;
     char *take; // how many lines to print
@@ -29,8 +28,9 @@ typedef struct {
     .show_line_number = false, \
     .show_non_printable_chars = false, \
     .copy_to_clipboard = false, \
-    .start = "1", \
+    .start = "", \
     .end = "", \
+    .take = "", \
     .highlight_line = "", \
     .filter = "" \
 }

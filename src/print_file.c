@@ -61,7 +61,7 @@ void print_file(FILE *file, FILE_OPTIONS options) {
     if (strcmp(options.start, "") != 0) start = strtol(options.start, NULL, 10);
     long end = LONG_MAX;
     if (strcmp(options.end, "") != 0) end = strtol(options.end, NULL, 10);
-    long take = end - start + 1;
+    long take = 0;
     if (strcmp(options.take, "") != 0) take = strtol(options.take, NULL, 10);
     long highlight = 0;
     if (strcmp(options.highlight_line, "") != 0) highlight = strtol(options.highlight_line, NULL, 10);
@@ -114,7 +114,7 @@ void print_file(FILE *file, FILE_OPTIONS options) {
             else if (start < 0) is_start = line_count - line_number + 1 <= -start;
             bool is_end = false;
             if (end >= 0) is_end = line_number <= end;
-            else if (end < 0) is_end = line_number <= -end;
+            else if (end < 0) is_end = line_number <= line_count + end;
             bool needs_filter = strcmp(options.filter, "") != 0;
             bool is_filtered = true;
             if (needs_filter) is_filtered = str_contains(line, options.filter);
@@ -122,7 +122,7 @@ void print_file(FILE *file, FILE_OPTIONS options) {
 
             bool needs_break = false;
 
-            if (is_start && is_end && (needs_filter ? is_filtered : true) && !jump_back) {
+            if (is_start && is_end && (needs_filter ? is_filtered : true) && take != 0 && !jump_back) {
                 took_lines++;
                 if (took_lines >= take) needs_break = true;
             }
