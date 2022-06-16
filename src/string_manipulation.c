@@ -1,7 +1,8 @@
-#include "str_contains.h"
+#include "string_manipulation.h"
 #include <string.h>
 #include <ctype.h>
 #include <malloc.h>
+#include <regex.h>
 #include "def/alloc.h"
 #include "def/style.h"
 
@@ -92,4 +93,19 @@ char *highlight_needle(char *heystack, char *needle, bool is_highlighted) {
     free(heystack_copy);
 
     return result;
+}
+
+bool pattern_match(char *string, char *pattern) {
+    char *string_copy = alloc(strlen(string) + 1);
+    regex_t regex;
+    int regex_result;
+
+    regex_result = regcomp(&regex, "^ok?$", REG_ICASE);
+    if (regex_result != 0) return false;
+
+    regex_result = regexec(&regex, string, 0, NULL, 0);
+    bool ret = regex_result == 0;
+
+    regfree(&regex);
+    return ret;
 }

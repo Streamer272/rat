@@ -10,6 +10,6 @@ add_executable(rat
         src/print_file.c src/print_file.h
         src/print_dir.c src/print_dir.h
         src/print_help.c src/print_help.h
-        src/str_contains.c src/str_contains.h)
+        src/string_manipulation.c src/string_manipulation.h)
 
 install(TARGETS rat DESTINATION /usr/local/bin)

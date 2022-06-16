@@ -53,9 +53,8 @@ void print_line(char *line) {
         bool is_color = false;
         bool new_line = false;
         for (int i = 0; i < strlen(line); i++) {
-            if (remaining == can_print) {
+            if (remaining == can_print)
                 printf("%s", border);
-            }
 
             char ch = line[i];
             if (ch == ' ') {
@@ -152,7 +151,7 @@ void print_help() {
     print_empty_line();
 
     print_arg("-n", "--number             ", "Print line numbers");
-    print_arg("-C", "--show-chars         ", "Show nonprintable characters as ^SOMETHING");
+    print_arg("-C", "--show-chars         ", "Show nonprintable characters");
     print_arg("-c", "--clipboard          ", "Write file content to clipboard instead of STDOUT");
     print_arg("-s", "--start      <NUMBER>", "Line to start printing at");
     print_arg("-e", "--end        <NUMBER>", "Line to end printing at");
@@ -178,8 +177,8 @@ void print_help() {
     free(temp);
     print_empty_line();
 
-    print_arg("-v", "--version            ", "Print version and exit");
-    print_arg("-h", "--help               ", "Print help message and exit");
+    print_arg("-v", "--version            ", "Print version");
+    print_arg("-h", "--help               ", "Print help message");
 
     // footer
     print_empty_line();

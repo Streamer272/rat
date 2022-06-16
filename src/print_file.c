@@ -4,7 +4,7 @@
 #include <malloc.h>
 #include <limits.h>
 #include "def/alloc.h"
-#include "str_contains.h"
+#include "string_manipulation.h"
 #include "def/style.h"
 
 long get_line_count(FILE *file) {
