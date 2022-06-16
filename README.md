@@ -19,7 +19,7 @@ sudo make install
 
 The less painful way, installing from [GitHub Releases](https://github.com/Streamer272/rat/releases)
 ```shell
-curl https://raw.githubusercontent.com/Streamer272/rat/master/install.sh | sudo bash
+curl https://raw.githubusercontent.com/Streamer272/rat/main/install.sh | sudo bash
 ```
 
 ## Usage

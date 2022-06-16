@@ -44,6 +44,8 @@ void print_line_number(int line_number) {
 }
 
 void print_file(FILE *file, FILE_OPTIONS options) {
+    if (options.copy_to_clipboard) disable_colors(); // you don't want useless ANSI escape sequences in your clipboard now do you?
+
     char *tmp_filename = NULL;
     FILE *tmp_file = NULL;
     if (options.copy_to_clipboard) {
