@@ -4,7 +4,7 @@
 #include <stddef.h>
 
 #define OFFSET "  "
-#define MINIMUM_LINE_SIZE 20
+#define MINIMUM_LINE_SIZE 40
 #define print_empty_line() print_line("")
 
 size_t printable_len(char *line);

@@ -6,7 +6,6 @@
 #include <ctype.h>
 #include "def/style.h"
 #include "def/term.h"
-#include "def/alloc.h"
 
 size_t printable_len(char *line) {
     if (line == NULL) return 0;
@@ -32,29 +31,60 @@ size_t printable_len(char *line) {
 
 void print_line(char *line) {
     if (line == NULL) return;
-    // TODO: add printing output on next line if terminal is too small
 
-    size_t len = printable_len(line);
+    size_t line_length = printable_len(line);
 
-    if (len + 2 < term_size.ws_col) {
+    // 2 is strlen(││)
+    if (line_length + 2 < term_size.ws_col) {
         char *temp = colored("│", GREY);
         printf("%s%s", temp, line);
 
-        for (int i = 0; i < term_size.ws_col - len - 2; i++) {
+        for (int i = 0; i < term_size.ws_col - line_length - 2; i++) {
             printf(" ");
         }
 
         printf("%s\n", temp);
+        free(temp);
     }
     else {
-//    char *temp = colored("│", GREY);
-//    printf("%s", temp);
-//    printf("line: %s", line);
-//    for (int j = 0; j < fill_len; j++) {
-//        printf(" ");
-//    }
-//    printf("%s\n", temp);
-//    free(temp);
+        char *border = colored("│", GREY);
+
+        int can_print = term_size.ws_col - 2;
+        int remaining = can_print;
+        bool is_color = false;
+        for (int i = 0; i < strlen(line); i++) {
+            if (remaining == can_print) {
+                printf("%s", border);
+            }
+
+            char ch = line[i];
+            printf("%c", ch);
+
+            if (is_color) {
+                if (ch == 'm') is_color = false;
+                continue;
+            } else if (ch == '\e') {
+                is_color = true;
+                continue;
+            }
+
+            if (isprint(ch)) remaining--;
+
+            if (remaining == 0) {
+                printf("%s\n", border);
+                remaining = can_print;
+            }
+        }
+
+        if (remaining == can_print) {
+            printf("%s", border);
+        }
+        for (int i = remaining; i > 0; i--) {
+            printf(" ");
+        }
+
+        printf("%s\n", border);
+        free(border);
     }
 }
 
@@ -68,7 +98,7 @@ void print_help() {
     if (term_size.ws_col < MINIMUM_LINE_SIZE) {
         char *message = colored("Terminal is too small (required %d, got %hu)\n", RED);
         fprintf(stderr, message, MINIMUM_LINE_SIZE, term_size.ws_col);
-//        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     // usage text
