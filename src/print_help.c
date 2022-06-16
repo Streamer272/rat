@@ -8,54 +8,21 @@
 #include "def/term.h"
 #include "def/alloc.h"
 
-char *buffer = NULL;
-unsigned int buffer_current_size = 0;
-unsigned int buffer_max_size_coefficient = 1;
-
-bool is_terminal_small = false;
-size_t required_terminal_size = 2;  // 2 is strlen(││)
-
-void safe_print(const char *line) {
-    if (line == NULL) return;
-
-    if (buffer == NULL) buffer = alloc(BUFFER_BASE_SIZE * buffer_max_size_coefficient);
-    while (buffer_current_size + strlen(line) >= buffer_max_size_coefficient * BUFFER_BASE_SIZE) {
-        buffer = ralloc(buffer, BUFFER_BASE_SIZE * buffer_max_size_coefficient, BUFFER_BASE_SIZE);
-        buffer_max_size_coefficient++;
-    }
-
-    sprintf(buffer, "%s%s", buffer, line);
-    buffer_current_size += strlen(line);
-}
-
-void safe_flush() {
-    if (buffer == NULL) return;
-    if (is_terminal_small) {
-        char *message = colored("Terminal is too small (required %zu, got %hu)\n", RED);
-        fprintf(stderr, message, required_terminal_size, term_size.ws_col);
-        exit(EXIT_FAILURE);
-    }
-
-    printf("%s", buffer);
-    free(buffer);
-    buffer_current_size = 0;
-    buffer_max_size_coefficient = 1;
-    buffer = NULL;
-}
-
 size_t printable_len(char *line) {
+    if (line == NULL) return 0;
+
     int count = 0;
     bool is_color = false;
     for (int i = 0; i < strlen(line); i++) {
+        char ch = line[i];
+
         if (is_color) {
-            if (line[i] == 'm') {
-                is_color = false;
-            }
+            if (ch == 'm') is_color = false;
             continue;
-        } else if (line[i] == '\e') {
+        } else if (ch == '\e') {
             is_color = true;
             continue;
-        } else if (isprint(line[i])) {
+        } else if (isprint(ch)) {
             count++;
         }
     }
@@ -64,24 +31,31 @@ size_t printable_len(char *line) {
 }
 
 void print_line(char *line) {
+    if (line == NULL) return;
     // TODO: add printing output on next line if terminal is too small
 
-    if (term_size.ws_col < printable_len(line) + 2) {
-        is_terminal_small = true;
-        if (required_terminal_size < printable_len(line) + 2) required_terminal_size = printable_len(line) + 2;
-        return;
-    }
+    size_t len = printable_len(line);
 
-    char *temp = join_strings(4, GREY, "│", RESET, line);
-    safe_print(temp);
-    free(temp);
-    // 2 is strlen(│) + strlen(│)
-    for (int i = 0; i < (int) ((int) term_size.ws_col) - printable_len(line) - 2; i++) {
-        safe_print(" ");
+    if (len + 2 < term_size.ws_col) {
+        char *temp = colored("│", GREY);
+        printf("%s%s", temp, line);
+
+        for (int i = 0; i < term_size.ws_col - len - 2; i++) {
+            printf(" ");
+        }
+
+        printf("%s\n", temp);
     }
-    temp = colored("│\n", GREY);
-    safe_print(temp);
-    free(temp);
+    else {
+//    char *temp = colored("│", GREY);
+//    printf("%s", temp);
+//    printf("line: %s", line);
+//    for (int j = 0; j < fill_len; j++) {
+//        printf(" ");
+//    }
+//    printf("%s\n", temp);
+//    free(temp);
+    }
 }
 
 void print_arg(char *short_name, char *long_name, char *description) {
@@ -91,24 +65,32 @@ void print_arg(char *short_name, char *long_name, char *description) {
 }
 
 void print_help() {
-    safe_print("\n");
-    char *temp = join_strings(4, "Usage: ", BOLD, "rat [OPTIONS] PATHS...\n", RESET);
-    safe_print(temp);
-    free(temp);
-    safe_print("\n");
+    if (term_size.ws_col < MINIMUM_LINE_SIZE) {
+        char *message = colored("Terminal is too small (required %d, got %hu)\n", RED);
+        fprintf(stderr, message, MINIMUM_LINE_SIZE, term_size.ws_col);
+//        exit(EXIT_FAILURE);
+    }
 
+    // usage text
+    printf("\n");
+    char *temp = join_strings(4, "Usage: ", BOLD, "rat [OPTIONS] PATHS...", RESET);
+    printf("%s\n", temp);
+    printf("\n");
+    free(temp);
+
+    // header
     temp = join_strings(2, GREY, "┌ Options ");
-    safe_print(temp);
+    printf("%s", temp);
     free(temp);
     // 11 is strlen(┌ Options ) + strlen(┐)
     for (int i = 0; i < term_size.ws_col - 11; i++) {
-        safe_print("─");
+        printf("─");
     }
-    temp = join_strings(2, "┐\n", RESET);
-    safe_print(temp);
+    temp = join_strings(2, "┐", RESET);
+    printf("%s\n", temp);
     free(temp);
-    print_empty_line();
 
+    // file options
     temp = colored("File options", BOLD);
     print_line(temp);
     free(temp);
@@ -122,18 +104,20 @@ void print_help() {
     print_arg("-t", "--take       <NUMBER>", "Number of lines to print");
     print_arg("-H", "--highlight  <NUMBER>", "Line to highlight");
     print_arg("-f", "--filter     <FILTER>", "Only print lines containing <FILTER>");
-
     print_empty_line();
+
+    // dir options
     temp = colored("Directory options", BOLD);
     print_line(temp);
     free(temp);
     print_empty_line();
 
-    temp = colored("TODO", BOLD);
+    temp = colored("TODO", GREEN);
     print_line(temp);
     free(temp);
-
     print_empty_line();
+
+    // commands
     temp = colored("Commands", BOLD);
     print_line(temp);
     free(temp);
@@ -142,18 +126,17 @@ void print_help() {
     print_arg("-v", "--version            ", "Print version and exit");
     print_arg("-h", "--help               ", "Print help message and exit");
 
+    // footer
     print_empty_line();
     temp = join_strings(2, GREY, "└");
-    safe_print(temp);
+    printf("%s", temp);
     free(temp);
     // 2 is strlen(└) + strlen(┘)
     for (int i = 0; i < term_size.ws_col - 2; i++) {
-        safe_print("─");
+        printf("─");
     }
-    temp = join_strings(2, "┘\n", RESET);
-    safe_print(temp);
+    temp = join_strings(2, "┘", RESET);
+    printf("%s\n", temp);
     free(temp);
-    safe_print("\n");
-
-    safe_flush();
+    printf("\n");
 }
