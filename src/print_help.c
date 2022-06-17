@@ -57,7 +57,7 @@ void print_line(char *line) {
                 printf("%s", border);
 
             char ch = line[i];
-            if (ch == ' ') {
+            if (isspace(ch)) {
                 int next_word_length = 0;
                 for (int j = i + 1; j < strlen(line); j++) {
                     char next_ch = line[j];
@@ -68,7 +68,7 @@ void print_line(char *line) {
                         break;
                 }
 
-                if (next_word_length > remaining)
+                if (next_word_length > remaining - 1)
                     new_line = true;
             }
 
