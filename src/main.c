@@ -35,6 +35,8 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
+        if (strcmp(argv[i], "") == 0) continue;
+
         // file args
         if (strcmp(argv[i], "-n") == 0 || strcmp(argv[i], "--number") == 0) {
             file_options.show_line_number = true;
