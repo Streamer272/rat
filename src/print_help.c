@@ -52,6 +52,10 @@ void print_line(char *line) {
         int remaining = can_print;
         int space_debt = 0;
         int space_added = 0;
+        int description_start = 0;
+        int word_index = 0;
+        int char_index = 0;
+        int color_length = 0;
         bool is_color = false;
         bool new_line = false;
         for (int i = 0; i < strlen(line); i++) {
@@ -60,6 +64,8 @@ void print_line(char *line) {
 
             char ch = line[i];
             if (isspace(ch)) {
+                char_index = 0;
+
                 int next_word_length = 0;
                 for (int j = i + 1; j < strlen(line); j++) {
                     char next_ch = line[j];
@@ -73,25 +79,43 @@ void print_line(char *line) {
                 if (next_word_length > remaining - 1)
                     new_line = true;
             }
+            else if (ch != ESCAPE_CHAR && !is_color && description_start == 0) {
+                if (char_index == 0) {
+                    word_index++;
 
+                    if (word_index >= 3 && ch != '<') {
+                        description_start = i - color_length;
+                    }
+                }
+
+                char_index++;
+            }
+
+            bool dont_print = false;
             if (i != 0 && remaining == can_print) {
-                for (int j = 0; j < 4; j++) {
+                for (int j = 0; j < description_start; j++) {
                     printf(" ");
                     remaining--;
                     space_added++;
                 }
+
+                if (isspace(ch)) {
+                    space_debt++;
+                    dont_print = true;
+                }
             }
 
-            if (i != 0 && remaining + space_added == can_print && isspace(ch))
-                space_debt++;
-            else
+            if (!dont_print)
                 printf("%c", ch);
 
             if (is_color) {
-                if (ch == 'm') is_color = false;
+                color_length++;
+                if (ch == 'm')
+                    is_color = false;
                 continue;
-            } else if (ch == '\e') {
+            } else if (ch == ESCAPE_CHAR) {
                 is_color = true;
+                color_length++;
                 continue;
             }
 
@@ -107,6 +131,7 @@ void print_line(char *line) {
                 new_line = false;
                 space_debt = 0;
                 space_added = 0;
+                color_length = 0;
             }
 
             if (remaining == 0) {

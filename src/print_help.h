@@ -6,6 +6,7 @@
 #define OFFSET "  "
 #define MINIMUM_LINE_SIZE 40
 #define print_empty_line() print_line("")
+#define ESCAPE_CHAR 27
 
 size_t printable_len(char *line);
 void print_line(char *line);
