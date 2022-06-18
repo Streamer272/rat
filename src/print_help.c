@@ -51,6 +51,7 @@ void print_line(char *line) {
         int can_print = term_size.ws_col - 2;
         int remaining = can_print;
         int space_debt = 0;
+        int space_added = 0;
         bool is_color = false;
         bool new_line = false;
         for (int i = 0; i < strlen(line); i++) {
@@ -73,8 +74,16 @@ void print_line(char *line) {
                     new_line = true;
             }
 
-            if (i != 0 && remaining == can_print && isspace(ch))
-                space_debt += 1;
+            if (i != 0 && remaining == can_print) {
+                for (int j = 0; j < 4; j++) {
+                    printf(" ");
+                    remaining--;
+                    space_added++;
+                }
+            }
+
+            if (i != 0 && remaining + space_added == can_print && isspace(ch))
+                space_debt++;
             else
                 printf("%c", ch);
 
@@ -97,6 +106,7 @@ void print_line(char *line) {
                 remaining = can_print;
                 new_line = false;
                 space_debt = 0;
+                space_added = 0;
             }
 
             if (remaining == 0) {
