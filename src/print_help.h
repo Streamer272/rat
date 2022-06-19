@@ -4,6 +4,7 @@
 #include <stddef.h>
 
 #define OFFSET "  "
+#define SPACE " "
 #define MINIMUM_LINE_SIZE 40
 #define print_empty_line() print_line("")
 #define ESCAPE_CHAR 27

@@ -32,14 +32,14 @@ size_t printable_len(char *line) {
 void print_line(char *line) {
     if (line == NULL) return;
 
-    size_t line_length = printable_len(line);
+    size_t line_len_printable= printable_len(line);
 
     // 2 is strlen(││)
-    if (line_length + 2 < term_size.ws_col) {
+    if (line_len_printable + 2 <= term_size.ws_col) {
         char *temp = colored("│", GREY);
         printf("%s%s", temp, line);
 
-        for (int i = 0; i < term_size.ws_col - line_length - 2; i++) {
+        for (int i = 0; i < term_size.ws_col - line_len_printable - 2; i++) {
             printf(" ");
         }
 
@@ -47,6 +47,7 @@ void print_line(char *line) {
         free(temp);
     } else {
         char *border = colored("│", GREY);
+        size_t line_len = strlen(line);
 
         int can_print = term_size.ws_col - 2;
         int remaining = can_print;
@@ -58,16 +59,18 @@ void print_line(char *line) {
         int color_length = 0;
         bool is_color = false;
         bool new_line = false;
-        for (int i = 0; i < strlen(line); i++) {
+        for (int i = 0; i < line_len; i++) {
             if (remaining == can_print)
                 printf("%s", border);
 
             char ch = line[i];
+
+            // \n is a space
             if (isspace(ch)) {
                 char_index = 0;
 
                 int next_word_length = 0;
-                for (int j = i + 1; j < strlen(line); j++) {
+                for (int j = i + 1; j < line_len; j++) {
                     char next_ch = line[j];
 
                     if (next_ch >= 33 && next_ch <= 126)
@@ -119,7 +122,8 @@ void print_line(char *line) {
                 continue;
             }
 
-            if (isprint(ch)) remaining--;
+            if (isprint(ch))
+                remaining--;
 
             if (new_line) {
                 for (int j = 0; j < remaining + space_debt; j++) {
@@ -156,6 +160,7 @@ void print_arg(char *short_name, char *long_name, char *description) {
     char *temp = join_strings(10, OFFSET, GREEN, short_name, RESET, " ", CYAN, long_name, RESET, OFFSET, description);
     print_line(temp);
     free(temp);
+    print_empty_line();
 }
 
 void print_help() {
@@ -183,9 +188,10 @@ void print_help() {
     temp = join_strings(2, "┐", RESET);
     printf("%s\n", temp);
     free(temp);
+    print_empty_line();
 
     // file options
-    temp = colored("File options", BOLD);
+    temp = colored(SPACE "File options", BOLD);
     print_line(temp);
     free(temp);
     print_empty_line();
@@ -198,21 +204,20 @@ void print_help() {
     print_arg("-t", "--take       <NUMBER>", "Number of lines to print");
     print_arg("-H", "--highlight  <NUMBER>", "Line to highlight");
     print_arg("-f", "--filter     <FILTER>", "Only print lines containing FILTER");
-    print_empty_line();
 
     // dir options
-    temp = colored("Directory options", BOLD);
+    temp = colored(SPACE "Directory options", BOLD);
     print_line(temp);
     free(temp);
     print_empty_line();
 
-    temp = colored("TODO", GREEN);
+    temp = colored(OFFSET "TODO", GREEN);
     print_line(temp);
     free(temp);
     print_empty_line();
 
     // commands
-    temp = colored("Commands", BOLD);
+    temp = colored(SPACE "Commands", BOLD);
     print_line(temp);
     free(temp);
     print_empty_line();
