@@ -93,3 +93,26 @@ char *highlight_needle(char *heystack, char *needle, bool is_highlighted) {
 
     return result;
 }
+
+char *format_bytes(size_t bytes) {
+    unsigned short unit = 0;
+    long double value = bytes;
+
+    while (value > 1024) {
+        value /= 1024;
+        unit++;
+    }
+
+    char *units[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
+    char *result = alloc(sizeof(char) * (4 + strlen(units[unit]) + 1));
+    sprintf(result, "%.0Lf%s", value, units[unit]);
+
+    char *colored_result = colored(result, GREEN);
+    free(result);
+    return colored_result;
+}
+
+char *format_perms(mode_t perms) {
+    // TODO: implement
+    return "perms";
+}

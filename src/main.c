@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 #include <sys/stat.h>
 #include "print_help.h"
 #include "print_file.h"
 #include "print_dir.h"
+#include "string_manipulation.h"
 #include "def/program.h"
 #include "def/style.h"
 #include "def/term.h"
@@ -121,14 +123,16 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
-        if (file_count > 1) {
-            for (int j = 0; j < LINE_NUMBER_WIDTH; j++) {
-                printf(" ");
-            }
-            char *message = colored("%s\n", BOLD);
-            printf(message, files[i]);
-            free(message);
+        for (int j = 0; j < LINE_NUMBER_WIDTH; j++) {
+            printf(" ");
         }
+        char *message = join_strings(4, BOLD, "%s", RESET, " %s %s, %s");
+        char *perms = format_perms(stats.st_mode);
+        char *bytes = format_bytes(stats.st_size);
+        printf(message, files[i], perms, bytes, ctime(&stats.st_mtime));
+        free(message);
+//        free(perms);
+        free(bytes);
 
         // check if it is a file
         if ((stats.st_mode & S_IFDIR) == 0) {
