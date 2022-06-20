@@ -132,8 +132,6 @@ int main(int argc, char *argv[]) {
 
         // check if it is a file
         if ((stats.st_mode & S_IFDIR) == 0) {
-            // TODO: add pattern matching (e.g. *.txt -> test.txt, test2.txt)
-
             if (file == NULL && (file = fopen(files[i], "r")) == NULL) {
                 char *message = colored("Couldn't open %s\n", RED);
                 fprintf(stderr, message, files[i]);
