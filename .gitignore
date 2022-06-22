@@ -3,3 +3,4 @@
 
 /build
 /cgen-build
+/cmake-build*
