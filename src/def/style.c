@@ -11,6 +11,7 @@ char *UNDERLINE;
 char *BLACK;
 char *RED;
 char *GREEN;
+char *YELLOW;
 char *CYAN;
 char *GREY;
 char *GREY_BG;
@@ -24,6 +25,7 @@ void enable_colors() {
     BLACK = style("30");
     RED = style("31");
     GREEN = style("32");
+    YELLOW = style("33");
     CYAN = style("36");
     GREY = style("38;2;153;153;153");
     GREY_BG = style("48;2;69;69;69");
@@ -38,6 +40,7 @@ void disable_colors() {
     BLACK = NONE;
     RED = NONE;
     GREEN = NONE;
+    YELLOW = NONE;
     CYAN = NONE;
     GREY = NONE;
     GREY_BG = NONE;

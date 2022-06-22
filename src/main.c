@@ -123,15 +123,18 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
-        for (int j = 0; j < LINE_NUMBER_WIDTH; j++) {
-            printf(" ");
+        if (file_options.show_line_number) {
+            for (int j = 0; j < LINE_NUMBER_WIDTH; j++) {
+                printf(" ");
+            }
         }
-        char *message = join_strings(4, BOLD, "%s", RESET, " %s %s, %s");
+        char *message = join_strings(4, BOLD, "%s%s", RESET, " %s %s, %s");
+        char *file_name_suffix = (stats.st_mode & S_IFDIR) == 0 ? "" : "/";
         char *perms = format_perms(stats.st_mode);
         char *bytes = format_bytes(stats.st_size);
-        printf(message, files[i], perms, bytes, ctime(&stats.st_mtime));
+        printf(message, files[i], file_name_suffix, perms, bytes, ctime(&stats.st_mtime));
         free(message);
-//        free(perms);
+        free(perms);
         free(bytes);
 
         // check if it is a file

@@ -113,6 +113,31 @@ char *format_bytes(size_t bytes) {
 }
 
 char *format_perms(mode_t perms) {
-    // TODO: implement
-    return "perms";
+    char *usr_read = colored((perms & S_IRUSR) ? "r" : "-", YELLOW);
+    char *usr_write = colored((perms & S_IWUSR) ? "w" : "-", RED);
+    char *usr_exec = colored((perms & S_IXUSR) ? "x" : "-", GREEN);
+
+    char *group_read = colored((perms & S_IRGRP) ? "r" : "-", YELLOW);
+    char *group_write = colored((perms & S_IWGRP) ? "w" : "-", RED);
+    char *group_exec = colored((perms & S_IXGRP) ? "x" : "-", GREEN);
+
+    char *other_read = colored((perms & S_IROTH) ? "r" : "-", YELLOW);
+    char *other_write = colored((perms & S_IWOTH) ? "w" : "-", RED);
+    char *other_exec = colored((perms & S_IXOTH) ? "x" : "-", GREEN);
+
+    char *result = join_strings(11, BOLD, usr_read, usr_write, usr_exec, RESET, group_read, group_write, group_exec, other_read, other_write, other_exec);
+
+    free(usr_read);
+    free(usr_write);
+    free(usr_exec);
+
+    free(group_read);
+    free(group_write);
+    free(group_exec);
+
+    free(other_read);
+    free(other_write);
+    free(other_exec);
+
+    return result;
 }
