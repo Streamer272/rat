@@ -2,12 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <time.h>
-#include <sys/stat.h>
 #include "print_help.h"
 #include "print_file.h"
 #include "print_dir.h"
-#include "string_manipulation.h"
 #include "def/program.h"
 #include "def/style.h"
 #include "def/term.h"
@@ -106,54 +103,7 @@ int main(int argc, char *argv[]) {
 
     // file loop
     for (int i = 0; i < file_count; i++) {
-        if (files[i][0] == '\\') {
-            files[i]++;
-        }
-
-        FILE *file = NULL;
-        struct stat stats;
-
-        if (strcmp(files[i], "-") == 0) {
-            file = stdin;
-        }
-
-        if (file == NULL && stat(files[i], &stats) == -1) {
-            char *message = colored("Couldn't open %s\n", RED);
-            fprintf(stderr, message, files[i]);
-            continue;
-        }
-
-        if (file_options.show_line_number) {
-            for (int j = 0; j < LINE_NUMBER_WIDTH; j++) {
-                printf(" ");
-            }
-        }
-        char *message = join_strings(4, BOLD, "%s%s", RESET, " %s %s, %s");
-        char *file_name_suffix = (stats.st_mode & S_IFDIR) == 0 ? "" : "/";
-        char *perms = format_perms(stats.st_mode);
-        char *bytes = format_bytes(stats.st_size);
-        printf(message, files[i], file_name_suffix, perms, bytes, ctime(&stats.st_mtime));
-        free(message);
-        free(perms);
-        free(bytes);
-
-        // check if it is a file
-        if ((stats.st_mode & S_IFDIR) == 0) {
-            if (file == NULL && (file = fopen(files[i], "r")) == NULL) {
-                char *message = colored("Couldn't open %s\n", RED);
-                fprintf(stderr, message, files[i]);
-                free(message);
-                continue;
-            }
-
-            print_file(file, file_options);
-
-            if (file != stdin) {
-                fclose(file);
-            }
-        } else {
-            print_dir(files[i], dir_options);
-        }
+        print_path(files[i], file_options, dir_options);
 
         if (file_count > 1 && i != file_count - 1) {
             printf("\n");

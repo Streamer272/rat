@@ -3,6 +3,7 @@
 
 #include "def/options.h"
 
-void print_dir(char *path, DIR_OPTIONS options);
+void print_dir(char *path, FILE_OPTIONS file_options, DIR_OPTIONS dir_options);
+void print_path(char *path, FILE_OPTIONS file_options, DIR_OPTIONS dir_options);
 
 #endif

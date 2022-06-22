@@ -3,6 +3,8 @@
 #include <string.h>
 #include <malloc.h>
 #include <limits.h>
+#include <time.h>
+#include <sys/stat.h>
 #include "def/alloc.h"
 #include "string_manipulation.h"
 #include "def/style.h"
@@ -186,4 +188,20 @@ void print_file(FILE *file, FILE_OPTIONS options) {
         free(command);
         remove(tmp_filename);
     }
+}
+
+void print_file_name(char *file_name, struct stat stats, FILE_OPTIONS options) {
+    if (options.show_line_number) {
+        for (int j = 0; j < LINE_NUMBER_WIDTH; j++) {
+            printf(" ");
+        }
+    }
+    char *message = join_strings(4, BOLD, "%s%s", RESET, " %s %s, %s");
+    char *file_name_suffix = (stats.st_mode & S_IFDIR) ? "/" : "";
+    char *perms = format_perms(stats.st_mode);
+    char *bytes = format_bytes(stats.st_size);
+    printf(message, file_name, file_name_suffix, perms, bytes, ctime(&stats.st_mtime));
+    free(message);
+    free(perms);
+    free(bytes);
 }
