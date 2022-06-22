@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
 
     // file loop
     for (int i = 0; i < file_count; i++) {
-        print_path(files[i], file_options, dir_options);
+        print_path(files[i], file_options, dir_options, true);
 
         if (file_count > 1 && i != file_count - 1) {
             printf("\n");

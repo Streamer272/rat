@@ -2,6 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <malloc.h>
+#include <time.h>
 #include "def/alloc.h"
 #include "def/style.h"
 
@@ -140,4 +141,13 @@ char *format_perms(mode_t perms) {
     free(other_exec);
 
     return result;
+}
+
+char *format_time(time_t time) {
+    char *result = alloc(256);
+    struct tm *time_struct = localtime(&time);
+    strftime(result, 256, "%dth %B %Y %H:%M:%S", time_struct);
+    char *colored_result = colored(result, BLUE);
+    free(result);
+    return colored_result;
 }

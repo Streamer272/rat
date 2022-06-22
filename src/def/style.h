@@ -12,6 +12,7 @@ extern char *BLACK;
 extern char *RED;
 extern char *GREEN;
 extern char *YELLOW;
+extern char *BLUE;
 extern char *CYAN;
 extern char *GREY;
 extern char *GREY_BG;

@@ -190,18 +190,20 @@ void print_file(FILE *file, FILE_OPTIONS options) {
     }
 }
 
-void print_file_name(char *file_name, struct stat stats, FILE_OPTIONS options) {
+void print_file_name(char *file_name, struct stat stats, char *prefix, FILE_OPTIONS options) {
     if (options.show_line_number) {
         for (int j = 0; j < LINE_NUMBER_WIDTH; j++) {
             printf(" ");
         }
     }
-    char *message = join_strings(4, BOLD, "%s%s", RESET, " %s %s, %s");
+    char *message = join_strings(5, "%s", BOLD, "%s%s", RESET, " %s %s %s\n");
     char *file_name_suffix = (stats.st_mode & S_IFDIR) ? "/" : "";
     char *perms = format_perms(stats.st_mode);
     char *bytes = format_bytes(stats.st_size);
-    printf(message, file_name, file_name_suffix, perms, bytes, ctime(&stats.st_mtime));
+    char *time = format_time(stats.st_mtime);
+    printf(message, prefix, file_name, file_name_suffix, perms, bytes, time);
     free(message);
     free(perms);
     free(bytes);
+    free(time);
 }
