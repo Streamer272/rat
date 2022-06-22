@@ -108,7 +108,7 @@ char *format_bytes(size_t bytes) {
     char *result = alloc(sizeof(char) * (4 + strlen(units[unit]) + 1));
     sprintf(result, "%.0Lf%s", value, units[unit]);
 
-    char *colored_result = colored(result, GREEN);
+    char *colored_result = join_strings(4, GREEN, BOLD, result, RESET);
     free(result);
     return colored_result;
 }

@@ -196,12 +196,15 @@ void print_file_name(char *file_name, struct stat stats, char *prefix, FILE_OPTI
             printf(" ");
         }
     }
+
     char *message = join_strings(5, "%s", BOLD, "%s%s", RESET, " %s %s %s\n");
     char *file_name_suffix = (stats.st_mode & S_IFDIR) ? "/" : "";
     char *perms = format_perms(stats.st_mode);
     char *bytes = format_bytes(stats.st_size);
     char *time = format_time(stats.st_mtime);
+
     printf(message, prefix, file_name, file_name_suffix, perms, bytes, time);
+
     free(message);
     free(perms);
     free(bytes);
