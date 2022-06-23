@@ -146,7 +146,7 @@ char *format_perms(mode_t perms) {
 char *format_time(time_t time) {
     char *result = alloc(256);
     struct tm *time_struct = localtime(&time);
-    strftime(result, 256, "%dth %B %Y %H:%M:%S", time_struct);
+    strftime(result, 256, "%dth %B %Y, %H:%M:%S", time_struct);
     char *colored_result = colored(result, BLUE);
     free(result);
     return colored_result;

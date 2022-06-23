@@ -12,6 +12,6 @@ long get_line_count(FILE *file);
 void print_line_number(int line_number);
 
 void print_file(FILE *file, FILE_OPTIONS options);
-void print_file_name(char *file_name, struct stat stats, char *prefix, FILE_OPTIONS options);
+void print_file_name(char *file_name, struct stat stats, char *prefix, int spaces, FILE_OPTIONS options);
 
 #endif

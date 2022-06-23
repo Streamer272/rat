@@ -190,7 +190,7 @@ void print_file(FILE *file, FILE_OPTIONS options) {
     }
 }
 
-void print_file_name(char *file_name, struct stat stats, char *prefix, FILE_OPTIONS options) {
+void print_file_name(char *file_name, struct stat stats, char *prefix, int spaces, FILE_OPTIONS options) {
     if (options.show_line_number) {
         for (int j = 0; j < LINE_NUMBER_WIDTH; j++) {
             printf(" ");

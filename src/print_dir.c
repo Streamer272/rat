@@ -25,7 +25,7 @@ void print_path(char *path, FILE_OPTIONS file_options, DIR_OPTIONS dir_options, 
         return;
     }
 
-    print_file_name(path, stats, "", file_options);
+    print_file_name(path, stats, "", 0, file_options);
 
     if (!content)
         return;
@@ -71,7 +71,7 @@ void print_dir(char *path, FILE_OPTIONS file_options, DIR_OPTIONS dir_options) {
             continue;
         }
 
-        print_file_name(entry->d_name, stats, "    ", file_options);
+        print_file_name(entry->d_name, stats, "    ", 0, file_options);
     }
 
     closedir(dir);
