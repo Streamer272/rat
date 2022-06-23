@@ -3,7 +3,6 @@
 #include <string.h>
 #include <malloc.h>
 #include <limits.h>
-#include <time.h>
 #include <sys/stat.h>
 #include "def/alloc.h"
 #include "string_manipulation.h"

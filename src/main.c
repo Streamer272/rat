@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
         }
 
         // file
-        files[file_count] = alloc(sizeof(char) * strlen(argv[i]));
+        files[file_count] = alloc(sizeof(char) * strlen(argv[i]) + 1);
         strcpy(files[file_count], argv[i]);
         file_count++;
     }
