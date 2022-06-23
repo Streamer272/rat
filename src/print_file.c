@@ -12,9 +12,12 @@ long get_line_count(FILE *file) {
     long line_count = 0;
     char ch;
 
-    while (!feof(file)) {
+    while (true) {
         ch = (char) getc(file);
-        if (ch == '\n') line_count++;
+        if (ch == '\n')
+            line_count++;
+        if (feof(file))
+            break;
     }
     rewind(file);
 
@@ -45,18 +48,17 @@ void print_line_number(int line_number) {
 }
 
 void print_file(FILE *file, FILE_OPTIONS options) {
-    if (options.copy_to_clipboard) disable_colors(); // you don't want useless ANSI escape sequences in your clipboard now do you?
-
     char *tmp_filename = NULL;
     FILE *tmp_file = NULL;
     if (options.copy_to_clipboard) {
+        disable_colors(); // you don't want useless ANSI escape sequences in your clipboard now do you?
         tmp_filename = tmpnam(NULL);
         tmp_file = freopen(tmp_filename, "w+", stdout);
     }
 
     int line_number = 1;
     size_t line_size = LINE_SIZE;
-    long line_count = get_line_count(file);
+    long line_count = file != stdin ? get_line_count(file) : 0;
     long took_lines = 0;
     char *line = alloc(line_size + 1);
 
@@ -117,14 +119,21 @@ void print_file(FILE *file, FILE_OPTIONS options) {
         if (ready) {
             print_line:;
             bool is_start = false;
-            if (start >= 0) is_start = line_number >= start;
-            else if (start < 0) is_start = line_count - line_number + 1 <= -start;
+            if (start >= 0)
+                is_start = line_number >= start;
+            else if (start < 0)
+                is_start = line_count - line_number + 1 <= -start;
+
             bool is_end = false;
-            if (end >= 0) is_end = line_number <= end;
-            else if (end < 0) is_end = line_number <= line_count + end;
+            if (end >= 0)
+                is_end = line_number <= end;
+            else if (end < 0)
+                is_end = line_number <= line_count + end;
+
             bool needs_filter = strcmp(options.filter, "") != 0;
             bool is_filtered = true;
-            if (needs_filter) is_filtered = str_contains(line, options.filter);
+            if (needs_filter)
+                is_filtered = str_contains(line, options.filter);
             bool is_highlighted = line_number == highlight;
 
             bool needs_break = false;

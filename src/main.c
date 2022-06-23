@@ -17,13 +17,13 @@ int main(int argc, char *argv[]) {
     init_colors();
     init_terminal();
 
-    if (argc == 1) {
-        print_file(stdin, FILE_OPTIONS_DEFAULT);
-        return EXIT_SUCCESS;
-    }
-
     FILE_OPTIONS file_options = FILE_OPTIONS_DEFAULT;
     DIR_OPTIONS dir_options = DIR_OPTIONS_DEFAULT;
+
+    if (argc == 1) {
+        print_file(stdin, file_options);
+        return EXIT_SUCCESS;
+    }
 
     // command and arg loop
     char *value = NULL;
