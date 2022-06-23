@@ -51,10 +51,16 @@ void print_path(char *path, FILE_OPTIONS file_options, DIR_OPTIONS dir_options, 
 
 void print_dir(char *start, char *path, int nested_count, FILE_OPTIONS file_options, DIR_OPTIONS dir_options) {
     char *current_path = NULL;
-    if (strcmp(start, "") == 0 || strcmp(start, ".") == 0 || strncmp(start, path, strlen(start)) == 0)
-        current_path = path;
-    else
-        current_path = join_strings(3, start, "/", path);
+    if (strcmp(start, "") == 0 || strcmp(start, ".") == 0 || strncmp(start, path, strlen(start)) == 0) {
+        current_path = alloc(strlen(path) + 1);
+        strcpy(current_path, path);
+    }
+    else {
+        current_path = alloc(strlen(start) + 1 + strlen(path) + 1);
+        sprintf("%s/%s", start, path);
+    }
+
+    char *original_current_path = current_path;
 
     DIR *dir;
     struct dirent *entry;
@@ -103,6 +109,5 @@ void print_dir(char *start, char *path, int nested_count, FILE_OPTIONS file_opti
     }
 
     closedir(dir);
-    // TODO: fix memory leak
-//    free(original_current_path);
+    free(original_current_path);
 }
