@@ -76,6 +76,19 @@ int main(int argc, char *argv[]) {
         }
 
         // dir args
+        if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "--hidden") == 0) {
+            dir_options.show_hidden = true;
+            continue;
+        }
+        else if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--tree") == 0) {
+            dir_options.recursive = true;
+            continue;
+        }
+        else if (strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "--depth") == 0) {
+            dir_options.recursion_depth = alloc(sizeof(char) * strlen(argv[i + 1]) + 1);
+            value = dir_options.recursion_depth;
+            continue;
+        }
 
         // commands
         if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0) {

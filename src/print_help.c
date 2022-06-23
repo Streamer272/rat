@@ -211,10 +211,9 @@ void print_help() {
     free(temp);
     print_empty_line();
 
-    temp = colored(OFFSET "TODO", GREEN);
-    print_line(temp);
-    free(temp);
-    print_empty_line();
+    print_arg("-a", "--hidden             ", "Show hidden files");
+    print_arg("-r", "--tree               ", "Print directories recursively");
+    print_arg("-d", "--depth      <NUMBER>", "Print directories until NUMBER depth");
 
     // commands
     temp = colored(SPACE "Commands", BOLD);

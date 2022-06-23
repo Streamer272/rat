@@ -18,7 +18,6 @@ typedef struct {
     bool show_hidden;
     bool recursive;
     char *recursion_depth;
-    char *filter;
 } DIR_OPTIONS;
 
 #define FILE_OPTIONS_DEFAULT (FILE_OPTIONS) { \
@@ -34,9 +33,8 @@ typedef struct {
 
 #define DIR_OPTIONS_DEFAULT (DIR_OPTIONS) { \
     .show_hidden = false, \
-    .recursive = true, \
-    .recursion_depth = "3", \
-    .filter = "" \
+    .recursive = false, \
+    .recursion_depth = "3" \
 }
 
 #endif
