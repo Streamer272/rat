@@ -16,11 +16,7 @@ typedef struct {
 
 typedef struct {
     bool show_hidden;
-    bool show_size;
-    bool show_created_time;
-    bool show_updated_time;
     bool recursive;
-    bool long_output;
     char *filter;
 } DIR_OPTIONS;
 
@@ -37,11 +33,7 @@ typedef struct {
 
 #define DIR_OPTIONS_DEFAULT (DIR_OPTIONS) { \
     .show_hidden = false, \
-    .show_size = false, \
-    .show_created_time = false, \
-    .show_updated_time = false, \
     .recursive = false, \
-    .long_output = false, \
     .filter = "" \
 }
 

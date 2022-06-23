@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include "print_file.h"
+#include "def/alloc.h"
 #include "def/style.h"
 
 void print_path(char *path, FILE_OPTIONS file_options, DIR_OPTIONS dir_options, bool content) {
@@ -52,6 +53,9 @@ void print_dir(char *path, FILE_OPTIONS file_options, DIR_OPTIONS dir_options) {
     DIR *dir;
     struct dirent *entry;
 
+    if (path[0] == '\\')
+        path++;
+
     if ((dir = opendir(path)) == NULL) {
         char *message = colored("Couldn't open %s\n", RED);
         fprintf(stderr, message, path);
@@ -59,19 +63,31 @@ void print_dir(char *path, FILE_OPTIONS file_options, DIR_OPTIONS dir_options) {
     }
 
     while ((entry = readdir(dir)) != NULL) {
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+        char *file_name = alloc(strlen(entry->d_name) + 1);
+        strcpy(file_name, entry->d_name);
+
+        if (strcmp(file_name, ".") == 0 || strcmp(file_name, "..") == 0) {
+            free(file_name);
             continue;
-
-        struct stat stats;
-
-        if (stat(entry->d_name, &stats) == -1) {
-            char *message = colored("Couldn't open %s\n", RED);
-            fprintf(stderr, message, entry->d_name);
-            free(message);
+        }
+        if (file_name[0] == '.' && !dir_options.show_hidden) {
+            free(file_name);
             continue;
         }
 
-        print_file_name(entry->d_name, stats, "    ", 0, file_options);
+        struct stat stats;
+
+        if (stat(file_name, &stats) == -1) {
+            char *message = colored("Couldn't open %s\n", RED);
+            fprintf(stderr, message, file_name);
+            free(message);
+            free(file_name);
+            continue;
+        }
+
+        print_file_name(file_name, stats, "    ", 0, file_options);
+
+        free(file_name);
     }
 
     closedir(dir);
