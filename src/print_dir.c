@@ -44,17 +44,17 @@ void print_path(char *path, FILE_OPTIONS file_options, DIR_OPTIONS dir_options, 
 
         if (file != stdin)
             fclose(file);
-    } else
+    } else {
         print_dir("", path, 0, file_options, dir_options);
+    }
 }
 
 void print_dir(char *start, char *path, int nested_count, FILE_OPTIONS file_options, DIR_OPTIONS dir_options) {
     char *current_path = NULL;
-    if (strcmp(start, "") == 0)
+    if (strcmp(start, "") == 0 || strcmp(start, ".") == 0 || strncmp(start, path, strlen(start)) == 0)
         current_path = path;
-    else {
+    else
         current_path = join_strings(3, start, "/", path);
-    }
 
     DIR *dir;
     struct dirent *entry;
@@ -76,9 +76,8 @@ void print_dir(char *start, char *path, int nested_count, FILE_OPTIONS file_opti
         if (entry->d_name[0] == '.' && !dir_options.show_hidden)
             continue;
 
-        char *file_name = join_strings(3, current_path, "/", entry->d_name);
-
-        printf("printing '%s' with start '%s'/'%s'\n", file_name, current_path, entry->d_name);
+        char *file_name = alloc(strlen(current_path) + 1 + strlen(entry->d_name) + 1);
+        sprintf(file_name, "%s/%s", current_path, entry->d_name);
 
         struct stat stats;
         if (stat(file_name, &stats) == -1) {
@@ -96,12 +95,14 @@ void print_dir(char *start, char *path, int nested_count, FILE_OPTIONS file_opti
         print_file_name(file_name, stats, prefix, 0, file_options);
         free(prefix);
 
-        if ((stats.st_mode & S_IFDIR) != 0 && dir_options.recursive)
+        if ((stats.st_mode & S_IFDIR) != 0 && dir_options.recursive) {
             print_dir(current_path, file_name, nested_count + 1, file_options, dir_options);
+        }
 
         free(file_name);
     }
 
     closedir(dir);
-    free(current_path);
+    // TODO: fix memory leak
+//    free(original_current_path);
 }
