@@ -45,37 +45,42 @@ void print_path(char *path, FILE_OPTIONS file_options, DIR_OPTIONS dir_options, 
         if (file != stdin)
             fclose(file);
     } else
-        print_dir(path, 0, file_options, dir_options);
+        print_dir("", path, 0, file_options, dir_options);
 }
 
-void print_dir(char *path, int nested_count, FILE_OPTIONS file_options, DIR_OPTIONS dir_options) {
+void print_dir(char *start, char *path, int nested_count, FILE_OPTIONS file_options, DIR_OPTIONS dir_options) {
+    char *current_path = NULL;
+    if (strcmp(start, "") == 0)
+        current_path = path;
+    else {
+        current_path = join_strings(3, start, "/", path);
+    }
+
     DIR *dir;
     struct dirent *entry;
 
-    if (path[0] == '\\')
-        path++;
+    if (current_path[0] == '\\')
+        current_path++;
 
-    if ((dir = opendir(path)) == NULL) {
+    if ((dir = opendir(current_path)) == NULL) {
         char *message = colored("Couldn't open %s\n", RED);
-        fprintf(stderr, message, path);
-        exit(EXIT_FAILURE);
+        fprintf(stderr, message, current_path);
+        free(message);
+        free(current_path);
+        return;
     }
 
     while ((entry = readdir(dir)) != NULL) {
-        char *file_name = alloc(strlen(entry->d_name) + 1);
-        strcpy(file_name, entry->d_name);
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
+        if (entry->d_name[0] == '.' && !dir_options.show_hidden)
+            continue;
 
-        if (strcmp(file_name, ".") == 0 || strcmp(file_name, "..") == 0) {
-            free(file_name);
-            continue;
-        }
-        if (file_name[0] == '.' && !dir_options.show_hidden) {
-            free(file_name);
-            continue;
-        }
+        char *file_name = join_strings(3, current_path, "/", entry->d_name);
+
+        printf("printing '%s' with start '%s'/'%s'\n", file_name, current_path, entry->d_name);
 
         struct stat stats;
-
         if (stat(file_name, &stats) == -1) {
             char *message = colored("Couldn't open %s\n", RED);
             fprintf(stderr, message, file_name);
@@ -92,10 +97,11 @@ void print_dir(char *path, int nested_count, FILE_OPTIONS file_options, DIR_OPTI
         free(prefix);
 
         if ((stats.st_mode & S_IFDIR) != 0 && dir_options.recursive)
-            print_dir(file_name, nested_count + 1, file_options, dir_options);
+            print_dir(current_path, file_name, nested_count + 1, file_options, dir_options);
 
         free(file_name);
     }
 
     closedir(dir);
+    free(current_path);
 }
