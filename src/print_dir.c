@@ -49,7 +49,7 @@ void print_path(char *path, FILE_OPTIONS file_options, DIR_OPTIONS dir_options, 
     }
 }
 
-void print_dir(char *start, char *path, int nested_count, FILE_OPTIONS file_options, DIR_OPTIONS dir_options) {
+void print_dir(char *start, char *path, int nested_depth, FILE_OPTIONS file_options, DIR_OPTIONS dir_options) {
     char *current_path = NULL;
     if (strcmp(start, "") == 0 || strcmp(start, ".") == 0 || strncmp(start, path, strlen(start)) == 0) {
         current_path = alloc(strlen(path) + 1);
@@ -61,6 +61,9 @@ void print_dir(char *start, char *path, int nested_count, FILE_OPTIONS file_opti
     }
 
     char *original_current_path = current_path;
+    long recursion_depth = 3;
+    if (strcmp(dir_options.recursion_depth, "") != 0)
+        recursion_depth = strtol(dir_options.recursion_depth, NULL, 10);
 
     DIR *dir;
     struct dirent *entry;
@@ -94,15 +97,15 @@ void print_dir(char *start, char *path, int nested_count, FILE_OPTIONS file_opti
             continue;
         }
 
-        char *prefix = alloc((nested_count + 1) * 4 + 1);
-        for (int i = 0; i < nested_count + 1; i++) {
+        char *prefix = alloc((nested_depth + 1) * 4 + 1);
+        for (int i = 0; i < nested_depth + 1; i++) {
             strcat(prefix, "    ");
         }
         print_file_name(file_name, stats, prefix, 0, file_options);
         free(prefix);
 
-        if ((stats.st_mode & S_IFDIR) != 0 && dir_options.recursive) {
-            print_dir(current_path, file_name, nested_count + 1, file_options, dir_options);
+        if ((stats.st_mode & S_IFDIR) != 0 && dir_options.recursive && nested_depth + 1 < recursion_depth) {
+            print_dir(current_path, file_name, nested_depth + 1, file_options, dir_options);
         }
 
         free(file_name);

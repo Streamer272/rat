@@ -62,13 +62,17 @@ void print_file(FILE *file, FILE_OPTIONS options) {
     char *line = alloc(line_size + 1);
 
     long start = 1;
-    if (strcmp(options.start, "") != 0) start = strtol(options.start, NULL, 10);
+    if (strcmp(options.start, "") != 0)
+        start = strtol(options.start, NULL, 10);
     long end = LONG_MAX;
-    if (strcmp(options.end, "") != 0) end = strtol(options.end, NULL, 10);
+    if (strcmp(options.end, "") != 0)
+        end = strtol(options.end, NULL, 10);
     long take = 0;
-    if (strcmp(options.take, "") != 0) take = strtol(options.take, NULL, 10);
+    if (strcmp(options.take, "") != 0)
+        take = strtol(options.take, NULL, 10);
     long highlight = 0;
-    if (strcmp(options.highlight_line, "") != 0) highlight = strtol(options.highlight_line, NULL, 10);
+    if (strcmp(options.highlight_line, "") != 0)
+        highlight = strtol(options.highlight_line, NULL, 10);
 
     int i = 0;
     char ch;
