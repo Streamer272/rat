@@ -9,6 +9,27 @@
 #include "def/alloc.h"
 #include "def/style.h"
 
+int cmp_path(const void *path1, const void *path2) {
+    const char *path1c = *((const char **) path1);
+    const char *path2c = *((const char **) path2);
+
+//    printf("comparing %s to %s\n", path1c, path2c);
+
+    struct stat stats1, stats2;
+    if (stat(path1c, &stats1) == -1 || stat(path2c, &stats2) != -1) {
+        if ((stats1.st_mode & S_IFDIR) != 0) {
+            if ((stats2.st_mode & S_IFDIR) != 0)
+                return strcmp(path1c, path2c);
+
+            return -1;
+        }
+        else if ((stats2.st_mode & S_IFDIR) != 0)
+            return 1;
+    }
+
+    return strcmp(path1c, path2c);
+}
+
 void print_path(char *path, FILE_OPTIONS file_options, DIR_OPTIONS dir_options, bool content) {
     if (path[0] == '\\')
         path++;
@@ -79,7 +100,9 @@ void print_dir(char *start, char *path, int nested_depth, FILE_OPTIONS file_opti
         return;
     }
 
-    // TODO: sort entries by name
+    char **entries = alloc(sizeof(char *) * 16);
+    int entry_index = 0;
+
     while ((entry = readdir(dir)) != NULL) {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
             continue;
@@ -88,6 +111,16 @@ void print_dir(char *start, char *path, int nested_depth, FILE_OPTIONS file_opti
 
         char *file_name = alloc(strlen(current_path) + 1 + strlen(entry->d_name) + 1);
         sprintf(file_name, "%s/%s", current_path, entry->d_name);
+
+        entries[entry_index] = file_name;
+        entry_index++;
+    }
+
+    qsort(entries, entry_index, sizeof(char *), cmp_path);
+
+    bool first_file = true;
+    for (int i = 0; i < entry_index; i++) {
+        char *file_name = entries[i];
 
         struct stat stats;
         if (stat(file_name, &stats) == -1) {
@@ -98,8 +131,13 @@ void print_dir(char *start, char *path, int nested_depth, FILE_OPTIONS file_opti
             continue;
         }
 
+        if ((stats.st_mode & S_IFDIR) == 0 && first_file) {
+            first_file = false;
+            printf("\n");
+        }
+
         char *prefix = alloc((nested_depth + 1) * 4 + 1);
-        for (int i = 0; i < nested_depth + 1; i++) {
+        for (int j = 0; j < nested_depth + 1; j++) {
             strcat(prefix, "    ");
         }
         print_file_name(file_name, stats, prefix, 0, file_options);
