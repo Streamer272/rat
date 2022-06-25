@@ -79,6 +79,7 @@ void print_dir(char *start, char *path, int nested_depth, FILE_OPTIONS file_opti
         return;
     }
 
+    // TODO: sort entries by name
     while ((entry = readdir(dir)) != NULL) {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
             continue;
@@ -106,6 +107,7 @@ void print_dir(char *start, char *path, int nested_depth, FILE_OPTIONS file_opti
 
         if ((stats.st_mode & S_IFDIR) != 0 && dir_options.recursive && nested_depth + 1 < recursion_depth) {
             print_dir(current_path, file_name, nested_depth + 1, file_options, dir_options);
+            printf("\n");
         }
 
         free(file_name);
